@@ -65,8 +65,8 @@ tools/java-bridge/*.class
 __pycache__/
 *.pyc
 
-# ±æµÿ‘”œÓ
+# 
 .playwright-cli/
 35
 *.bak
-
+
