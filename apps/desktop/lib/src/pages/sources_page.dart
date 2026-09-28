@@ -82,6 +82,7 @@ class _SourcesPageState extends State<SourcesPage> {
     setState(() {
       _checking = false;
     });
+    StarFeedback.success();
     final bad = results.where((r) => !r.ok).length;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       backgroundColor: StarColors.raised,
@@ -428,6 +429,34 @@ class _SourcesPageState extends State<SourcesPage> {
         Row(
           children: [
             TextButton.icon(
+              onPressed: () {
+                StarFeedback.soundEnabled = !StarFeedback.soundEnabled;
+                StarFeedback.hapticEnabled = StarFeedback.soundEnabled;
+                if (StarFeedback.soundEnabled) StarFeedback.selection();
+                setState(() {});
+              },
+              icon: Icon(
+                  StarFeedback.soundEnabled
+                      ? Icons.volume_up_outlined
+                      : Icons.volume_off_outlined,
+                  size: 16),
+              label: Text(StarFeedback.soundEnabled ? '音效开' : '音效关',
+                  style: TextStyle(fontSize: 11, color: StarColors.ink4)),
+            ),
+            TextButton.icon(
+              onPressed: () {
+                StarFeedback.reduceMotion = !StarFeedback.reduceMotion;
+                setState(() {});
+              },
+              icon: Icon(
+                  StarFeedback.reduceMotion
+                      ? Icons.motion_photos_off
+                      : Icons.motion_photos_on,
+                  size: 16),
+              label: Text(StarFeedback.reduceMotion ? '减弱动效' : '全动效',
+                  style: TextStyle(fontSize: 11, color: StarColors.ink4)),
+            ),
+            TextButton.icon(
               onPressed: themeNotifier.toggle,
               icon: const Icon(Icons.palette_outlined, size: 16),
               label: const Text('切换亮/暗主题',
@@ -549,11 +578,38 @@ class _SourcesPageState extends State<SourcesPage> {
             ),
           );
         }
-        return ListView.separated(
+        return ReorderableListView.builder(
+          buildDefaultDragHandles: false,
           itemCount: sources.length,
-          separatorBuilder: (_, _) => const Divider(
-              color: StarColors.line, height: 1, indent: 12, endIndent: 12),
-          itemBuilder: (_, i) => _row(sources[i]),
+          // Flutter 3.41+：onReorderItem 的 newIndex 已扣除移除位
+          onReorderItem: (oldIndex, newIndex) async {
+            final list = [...sources];
+            final item = list.removeAt(oldIndex);
+            list.insert(newIndex, item);
+            await widget.services.registry
+                .reorder([for (final s in list) s.key]);
+            setState(_reload);
+            StarFeedback.selection();
+          },
+          itemBuilder: (_, i) {
+            final s = sources[i];
+            return Padding(
+              key: ValueKey('src-${s.key}'),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Row(
+                children: [
+                  ReorderableDelayedDragStartListener(
+                    index: i,
+                    child: const Padding(
+                      padding: EdgeInsets.all(6),
+                      child: Icon(Icons.drag_handle, size: 18, color: StarColors.ink4),
+                    ),
+                  ),
+                  Expanded(child: _row(s)),
+                ],
+              ),
+            );
+          },
         );
       },
     );

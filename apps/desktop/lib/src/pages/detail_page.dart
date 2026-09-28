@@ -148,7 +148,9 @@ class _DetailBody extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // 小海报（清晰叠在模糊层上）
-                    HoverScale(
+                    Hero(
+                      tag: 'poster-${card.workKey}',
+                      child: HoverScale(
                       scaleUp: 1.02,
                       child: Container(
                         width: 180,
@@ -184,11 +186,13 @@ class _DetailBody extends StatelessWidget {
                         ),
                       ),
                     ),
+                    ),
                     const SizedBox(width: 22),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          IxStaggerColumn(children: [
                           Text(
                             card.title,
                             style: const TextStyle(
@@ -210,6 +214,7 @@ class _DetailBody extends StatelessWidget {
                             style: const TextStyle(
                                 fontSize: 13, color: StarColors.ink2),
                           ),
+                          ]),
                           const SizedBox(height: 16),
                           Row(
                             children: [
@@ -257,14 +262,11 @@ class _DetailBody extends StatelessWidget {
                                 if (outcome is PlayOutcomeBlocked) {
                                   controller.dispose();
                                   if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        backgroundColor: StarColors.raised,
-                                        content: Text(
-                                          '该线路需要网页解析，请换线路或换源',
-                                          style: TextStyle(color: StarColors.ink),
-                                        ),
-                                      ),
+                                    IxErrorBar.show(
+                                      context,
+                                      '该线路需要网页解析，请换线路或换源',
+                                      actionLabel: '换源',
+                                      onAction: () => _showAltSources(context),
                                     );
                                   }
                                   return;
@@ -283,6 +285,8 @@ class _DetailBody extends StatelessWidget {
                                   controller: controller,
                                   session: session,
                                   title: card.title,
+                                  posterHeroTag: 'poster-${card.workKey}',
+                                  posterUrl: card.posterUrl,
                                   lineId: lineId,
                                   nextEpisodeTitle: next?.name,
                                   onPlayNext: next == null
@@ -298,9 +302,21 @@ class _DetailBody extends StatelessWidget {
                                 );
                               }
 
-                              return _EpisodePanel(
-                                lines: detail.lines,
-                                onPlay: playAt,
+                              return FutureBuilder<PlayRecord?>(
+                                future: services.playRecordStore
+                                    .get(card.workKey),
+                                builder: (context, recSnap) {
+                                  final rec = recSnap.data;
+                                  final ep = rec?.episodeIndex ?? 0;
+                                  return _EpisodePanel(
+                                    lines: detail.lines,
+                                    selectedIndex: ep,
+                                    watchedCount: ep + 1,
+                                    resumeIndex:
+                                        rec == null ? null : ep,
+                                    onPlay: playAt,
+                                  );
+                                },
                               );
                             }),
                           ),
@@ -537,10 +553,16 @@ class _EpisodePanel extends StatelessWidget {
   const _EpisodePanel({
     required this.lines,
     required this.onPlay,
+    this.selectedIndex = 0,
+    this.watchedCount = 0,
+    this.resumeIndex,
   });
 
   final List<PlayLine> lines;
   final void Function(String lineId, int episodeIndex) onPlay;
+  final int selectedIndex;
+  final int watchedCount;
+  final int? resumeIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -552,11 +574,11 @@ class _EpisodePanel extends StatelessWidget {
             spacing: 8,
             children: [
               for (var i = 0; i < lines.length; i++)
-                Chip(
+                ChoiceChip(
                   label: Text(lines[i].name),
-                  backgroundColor: i == 0
-                      ? StarColors.brandSoft
-                      : StarColors.surface,
+                  selected: i == 0,
+                  onSelected: (_) => StarFeedback.selection(),
+                  selectedColor: StarColors.brandSoft,
                   labelStyle: TextStyle(
                     color: i == 0 ? StarColors.brand : StarColors.ink2,
                     fontWeight: FontWeight.w600,
@@ -564,44 +586,30 @@ class _EpisodePanel extends StatelessWidget {
                 ),
             ],
           ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 12),
         Expanded(
           child: Builder(builder: (context) {
             final eps = lines.firstOrNull?.episodes ?? const <Episode>[];
-            return GridView.builder(
-              padding: EdgeInsets.zero,
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 72,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-                childAspectRatio: 1.35,
+            final labels = [for (final e in eps) e.name];
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    for (var i = 0; i < labels.length; i++)
+                      EpisodeChip(
+                        label: labels[i],
+                        selected: i == selectedIndex,
+                        resuming: i == resumeIndex && i != selectedIndex,
+                        watched: i < watchedCount,
+                        onTap: () =>
+                            onPlay(lines.firstOrNull?.lineId ?? '', i),
+                      ),
+                  ],
+                ),
               ),
-              itemCount: eps.length,
-              itemBuilder: (_, i) {
-                final ep = eps[i];
-                return InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: () => onPlay(lines.firstOrNull?.lineId ?? '', i),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: StarColors.glass,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.75)),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      ep.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: StarColors.ink),
-                    ),
-                  ),
-                );
-              },
             );
           }),
         ),
@@ -609,7 +617,6 @@ class _EpisodePanel extends StatelessWidget {
     );
   }
 }
-
 
 DomainPlayerController _asDomain(PlayerController c) {
   if (c is MediaKitPlayerController) return c.asDomain();
@@ -626,18 +633,28 @@ Future<void> _openPlayer(
   String? lineId,
   String? nextEpisodeTitle,
   VoidCallback? onPlayNext,
+  String? posterHeroTag,
+  String? posterUrl,
 }) async {
   if (controller is MediaKitPlayerController) {
-    await Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => PlayerPage(
-        controller: controller,
-        session: session,
-        title: title,
-        lineId: lineId,
-        nextEpisodeTitle: nextEpisodeTitle,
-        onPlayNext: onPlayNext,
+    await Navigator.of(context).push(
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 320),
+        transitionsBuilder: (context, anim, secondary, child) {
+          return FadeTransition(opacity: anim, child: child);
+        },
+        pageBuilder: (_, __, ___) => PlayerPage(
+          controller: controller,
+          session: session,
+          title: title,
+          lineId: lineId,
+          nextEpisodeTitle: nextEpisodeTitle,
+          onPlayNext: onPlayNext,
+          posterHeroTag: posterHeroTag,
+          posterUrl: posterUrl,
+        ),
       ),
-    ));
+    );
     return;
   }
   final label = controller is ExoVideoPlayerController ? 'Exo' : '外部播放器';
@@ -732,6 +749,8 @@ class _PlayButton extends StatelessWidget {
       controller: controller,
       session: session,
       title: card.title,
+      posterHeroTag: 'poster-${card.workKey}',
+      posterUrl: card.posterUrl,
       lineId: lineId,
       nextEpisodeTitle: next?.name,
       onPlayNext: next == null
@@ -786,11 +805,16 @@ class _FavoriteButtonState extends State<_FavoriteButton> {
         try {
           await widget.services.favoriteStore.toggle(widget.card);
           await _load();
+          if (_fav) {
+            StarFeedback.success();
+          } else {
+            StarFeedback.tap();
+          }
         } finally {
           if (mounted) setState(() => _busy = false);
         }
-        },
-      icon: Icon(_fav ? Icons.favorite : Icons.favorite_border, size: 18),
+      },
+      icon: Icon(_fav ? Icons.favorite : Icons.favorite_border, size: 18, color: _fav ? const Color(0xFFC0322B) : null),
       label: Text(_fav ? '已收藏' : '收藏'),
     );
   }

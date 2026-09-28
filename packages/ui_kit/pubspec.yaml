@@ -12,6 +12,14 @@ dependencies:
   flutter:
     sdk: flutter
   file_selector: ^1.0.3
+  audioplayers: ^6.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter:
+  assets:
+    - assets/tick.wav
+    - assets/success.wav
+    - assets/error.wav

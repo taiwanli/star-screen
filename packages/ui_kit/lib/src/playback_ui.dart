@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+
 import 'colors.dart';
+import 'ix_motion.dart';
 
 /// 连播倒计时（docs/09 M3-2）：默认 10s，可取消 / 立即播放。
 class NextEpisodeBanner extends StatefulWidget {
@@ -57,16 +59,35 @@ class _NextEpisodeBannerState extends State<NextEpisodeBanner> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.playlist_play, color: Color(0xFF4C9AFF), size: 22),
-          const SizedBox(width: 10),
-          Text(widget.title,
-              style: const TextStyle(fontSize: 14, color: StarColors.ink)),
+          SizedBox(
+            width: 36,
+            height: 36,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CircularProgressIndicator(
+                  value: _left / widget.countdown.inSeconds,
+                  strokeWidth: 3,
+                  backgroundColor: StarColors.line,
+                  valueColor:
+                      const AlwaysStoppedAnimation(Color(0xFF4C9AFF)),
+                ),
+                Text('$_left',
+                    style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: StarColors.ink)),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Flexible(
+            child: Text(widget.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 14, color: StarColors.ink)),
+          ),
           const SizedBox(width: 16),
-          Text('$_left s',
-              style: const TextStyle(
-                  fontFamily: 'Consolas',
-                  fontSize: 14,
-                  color: StarColors.ink3)),
           const SizedBox(width: 16),
           TextButton(
             onPressed: widget.onCancel,
@@ -167,11 +188,41 @@ class ImportReportView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('导入完成：$configs 个配置 · $sites 个站点（不支持 $unsupported 个）',
+        Text.rich(
+          TextSpan(
+            text: '导入完成：',
+            children: [
+              WidgetSpan(
+                  child: IxCountUp(
+                      value: configs,
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: StarColors.ink))),
+              const TextSpan(text: ' 个配置 · '),
+              WidgetSpan(
+                  child: IxCountUp(
+                      value: sites,
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: StarColors.ink))),
+              const TextSpan(text: ' 个站点（不支持 '),
+              WidgetSpan(
+                  child: IxCountUp(
+                      value: unsupported,
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: StarColors.ink))),
+              const TextSpan(text: ' 个）'),
+            ],
             style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: StarColors.ink)),
+                color: StarColors.ink),
+          ),
+        ),
         if (failedWarehouses.isNotEmpty) ...[
           const SizedBox(height: 8),
           Text('失效子仓：${failedWarehouses.join('、')}',

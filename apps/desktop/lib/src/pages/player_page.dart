@@ -16,6 +16,8 @@ class PlayerPage extends StatefulWidget {
   final String? lineId;
   final String? nextEpisodeTitle;
   final VoidCallback? onPlayNext;
+  final String? posterHeroTag;
+  final String? posterUrl;
 
   const PlayerPage({
     super.key,
@@ -25,6 +27,8 @@ class PlayerPage extends StatefulWidget {
     this.lineId,
     this.nextEpisodeTitle,
     this.onPlayNext,
+    this.posterHeroTag,
+    this.posterUrl,
   });
 
   @override
@@ -250,6 +254,15 @@ class _PlayerPageState extends State<PlayerPage> with WindowListener {
                             const SubtitleViewConfiguration(visible: false),
                       ),
                     ),
+                    if (widget.posterHeroTag != null && widget.posterUrl != null)
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          child: Hero(
+                            tag: widget.posterHeroTag!,
+                            child: _PosterMorph(url: widget.posterUrl!),
+                          ),
+                        ),
+                      ),
                     Positioned.fill(
                       child: StarSubtitleOverlay(
                         textStream: widget.controller.player.stream.subtitle,
@@ -514,6 +527,43 @@ class _DlnaControlDialog extends StatelessWidget {
           child: const Text('关闭'),
         ),
       ],
+    );
+  }
+}
+
+
+/// 海报共享元素：入场后淡出，露出视频（morph 过渡）。
+class _PosterMorph extends StatefulWidget {
+  const _PosterMorph({required this.url});
+  final String url;
+
+  @override
+  State<_PosterMorph> createState() => _PosterMorphState();
+}
+
+class _PosterMorphState extends State<_PosterMorph> {
+  double _opacity = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      setState(() => _opacity = 0);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedOpacity(
+      opacity: _opacity,
+      duration: const Duration(milliseconds: 420),
+      curve: Curves.easeOutCubic,
+      child: StarNetworkImage(
+        url: widget.url,
+        fit: BoxFit.cover,
+        fallback: const ColoredBox(color: Colors.black),
+      ),
     );
   }
 }

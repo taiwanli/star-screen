@@ -55,7 +55,7 @@ class DesktopJvmJarHost implements JarSpiderHost {
             final r = Process.runSync('where', [c]);
             if (r.exitCode == 0) return c;
           } on Object {
-            // ignore
+            // PATH 上没有该命令
           }
         }
       }
@@ -63,7 +63,9 @@ class DesktopJvmJarHost implements JarSpiderHost {
       try {
         final r = Process.runSync('which', ['java']);
         if (r.exitCode == 0) return 'java';
-      } on Object {}
+      } on Object {
+        // which/java 探测失败
+      }
     }
     return null;
   }
@@ -176,8 +178,10 @@ class DesktopJvmJarHost implements JarSpiderHost {
   @override
   Future<void> dispose() async {
     try {
-      await _proc?.kill();
-    } on Object {}
+      _proc?.kill();
+    } on Object {
+      // 进程可能已退出
+    }
     _proc = null;
     _booted = false;
     for (final p in _pending) {

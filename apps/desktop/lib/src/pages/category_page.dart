@@ -176,24 +176,37 @@ class _CategoryPageState extends State<CategoryPage> {
                 const SizedBox(width: 10),
                 // 年份 Chip
                 Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        for (final y in _years) ...[
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: _FilterChip(
-                              label: y,
-                              selected: y == '全部'
-                                  ? _year.isEmpty
-                                  : _year == y,
-                              onTap: () => _selectYear(y),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            for (final y in _years) ...[
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: _FilterChip(
+                                  label: y,
+                                  selected: y == '全部'
+                                      ? _year.isEmpty
+                                      : _year == y,
+                                  onTap: () => _selectYear(y),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      IxSlidingIndicator(
+                        count: _years.length,
+                        index: _years.indexOf(
+                          _year.isEmpty ? '全部' : _year,
+                        ),
+                        width: 280,
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -282,9 +295,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   itemCount: _items.length + (_loading ? 1 : 0),
                   itemBuilder: (_, i) {
                     if (i >= _items.length) {
-                      return const Center(
-                          child: CircularProgressIndicator(
-                              color: StarColors.brand));
+                      return const IxSkeleton(height: 220, radius: 14);
                     }
                     final card = _items[i];
                     final src = _source;

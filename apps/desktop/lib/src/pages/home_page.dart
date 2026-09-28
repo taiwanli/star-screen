@@ -50,8 +50,25 @@ class _HomePageState extends State<HomePage> {
       future: _sources,
       builder: (context, snap) {
         if (snap.connectionState != ConnectionState.done) {
-          return const Center(
-              child: CircularProgressIndicator(color: StarColors.brand));
+          return ListView(
+            padding: const EdgeInsets.all(20),
+            children: [
+              const IxSkeleton(height: 168, radius: 20),
+              const SizedBox(height: 22),
+              const IxSkeleton(width: 120, height: 18),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 250,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 6,
+                  separatorBuilder: (_, _) => const SizedBox(width: 14),
+                  itemBuilder: (_, i) => const IxSkeleton(
+                      width: 148, height: 222, radius: 14),
+                ),
+              ),
+            ],
+          );
         }
         if (snap.hasError) {
           return _Message('源列表加载失败：${snap.error}');
@@ -421,7 +438,8 @@ class _EmptySources extends StatelessWidget {
             ),
           ],
         ),
-        child: Column(
+        child: IxEmptyPulse(
+          child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.movie_filter_outlined,
@@ -441,6 +459,7 @@ class _EmptySources extends StatelessWidget {
               label: const Text('去添加源'),
             ),
           ],
+        ),
         ),
       ),
     );

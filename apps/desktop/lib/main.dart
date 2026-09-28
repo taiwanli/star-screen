@@ -51,6 +51,8 @@ class StarApp extends StatelessWidget {
       child: ValueListenableBuilder<Brightness>(
         valueListenable: themeNotifier,
         builder: (context, brightness, _) => MaterialApp(
+      themeAnimationDuration: const Duration(milliseconds: 280),
+      themeAnimationCurve: Curves.easeOutCubic,
           title: '星映',
           theme: starThemeData(tokens),
           home: const _ServicesBootstrap(),
@@ -277,8 +279,8 @@ class _DesktopShellState extends State<DesktopShell> {
       4 => LibraryPage(
           services: widget.services,
           onOpenDetail: _openDetail,
-          onOpenLan: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => LanPage(services: widget.services),
+          onOpenLan: () => Navigator.of(context).push(IxMotion.page(
+                LanPage(services: widget.services),
               )),
         ),
       5 => SourcesPage(services: widget.services, onChanged: _reloadSources),
@@ -290,8 +292,8 @@ class _DesktopShellState extends State<DesktopShell> {
   }
 
   void _openDetail(SourceDef def, WorkCard card) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => DetailPage(services: widget.services, def: def, card: card),
+    Navigator.of(context).push(IxMotion.page(
+      DetailPage(services: widget.services, def: def, card: card),
     ));
   }
 }

@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'ix_decoration.dart';
 import 'liquid_neu.dart';
 
 /// 播放器镀铬 v3 —— 对齐「液态玻璃 + 新拟态」（docs/15 / docs/19）。
@@ -287,7 +288,7 @@ class PlayerBottomChrome extends StatelessWidget {
             const SizedBox(height: 2),
             Row(
               children: [
-                _PlayBtn(onTap: onTogglePlay, playing: playing),
+                IxPlayPause(onToggle: onTogglePlay, playing: playing),
                 if (onPrev != null) ...[
                   const SizedBox(width: 4),
                   _IconBtn(
@@ -446,44 +447,23 @@ class _GlassPill extends StatelessWidget {
   }
 }
 
-class _PlayBtn extends StatelessWidget {
-  const _PlayBtn({required this.onTap, required this.playing});
-
-  final VoidCallback onTap;
-  final bool playing;
-
-  @override
-  Widget build(BuildContext context) {
-    return _IconBtn(
-      icon: playing
-          ? Icons.pause_rounded
-          : Icons.play_arrow_rounded,
-      onTap: onTap,
-      size: 28,
-      primary: true,
-    );
-  }
-}
-
 class _IconBtn extends StatelessWidget {
   const _IconBtn({
     required this.icon,
     required this.onTap,
     this.size = 22,
     this.tooltip,
-    this.primary = false,
   });
 
   final IconData icon;
   final VoidCallback onTap;
   final double size;
   final String? tooltip;
-  final bool primary;
 
   @override
   Widget build(BuildContext context) {
     final btn = Material(
-      color: primary ? LiquidNeuColors.brand : Colors.transparent,
+      color: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
       ),
@@ -495,7 +475,7 @@ class _IconBtn extends StatelessWidget {
           child: Icon(
             icon,
             size: size,
-            color: primary ? Colors.white : LiquidNeuColors.ink,
+            color: LiquidNeuColors.ink,
           ),
         ),
       ),

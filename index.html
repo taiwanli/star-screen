@@ -1,0 +1,376 @@
+<!-- AI生成 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>星映 2.0 · 交互升级报告</title>
+<style>
+  :root {
+    --bg: #F2F5F9; --card: #FFFFFF; --ink: #152033; --ink2: #3F4A5C; --ink3: #6B7789;
+    --brand: #2F7FD1; --brandSoft: rgba(47,127,209,.12); --ok: #1F8A4C;
+    --warn: #B26A00; --bad: #C0322B; --line: rgba(21,32,51,.08);
+    --r: 18px; --shadow: 8px 8px 22px rgba(163,177,198,.35), -6px -6px 16px rgba(255,255,255,.9);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font: 15px/1.65 -apple-system, "SF Pro Text", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--ink); padding: 20px 14px 72px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; }
+  h1 { font-size: 26px; letter-spacing: -.02em; font-weight: 700; }
+  .sub { color: var(--ink3); font-size: 13px; margin: 8px 0 22px; }
+  h2 {
+    font-size: 18px; font-weight: 650; margin: 28px 0 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  h2 .n {
+    width: 28px; height: 28px; border-radius: 10px; background: var(--brand);
+    color: #fff; font-size: 13px; display: grid; place-items: center;
+  }
+  h3 { font-size: 14px; margin: 16px 0 8px; color: var(--ink2); font-weight: 600; }
+  .card {
+    background: var(--card); border-radius: var(--r); padding: 16px 18px;
+    box-shadow: var(--shadow); margin-bottom: 14px;
+  }
+  .tag {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 600; background: var(--brandSoft); color: var(--brand);
+  }
+  .tag.ok { background: rgba(31,138,76,.12); color: var(--ok); }
+  .tag.warn { background: rgba(178,106,0,.12); color: var(--warn); }
+  .tag.bad { background: rgba(192,50,43,.12); color: var(--bad); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--ink3); font-size: 11px; font-weight: 600; }
+  ul.plain { padding-left: 18px; color: var(--ink2); font-size: 13px; }
+  ul.plain li { margin: 5px 0; }
+  .kpi { display: grid; grid-template-columns: repeat(auto-fit,minmax(120px,1fr)); gap: 10px; margin: 12px 0 18px; }
+  .kpi .i {
+    background: var(--card); border-radius: 14px; padding: 14px;
+    box-shadow: 4px 4px 12px rgba(163,177,198,.3);
+  }
+  .kpi .n { font-size: 22px; font-weight: 700; color: var(--brand); }
+  .kpi .l { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+  .callout {
+    border-left: 3px solid var(--brand); background: var(--brandSoft);
+    padding: 12px 14px; border-radius: 0 12px 12px 0; font-size: 13px; color: var(--ink2);
+    margin: 12px 0;
+  }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
+  /* demo episode strip */
+  .eps { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
+  .ep {
+    min-width: 52px; height: 44px; border-radius: 12px; display: grid; place-items: center;
+    background: var(--bg); color: var(--ink2); font-weight: 600; font-size: 13px;
+    border: 1.5px solid transparent; cursor: pointer;
+    transition: transform .18s cubic-bezier(.2,.8,.2,1), background .18s, color .18s, box-shadow .18s, border-color .18s;
+    user-select: none;
+  }
+  .ep:hover {
+    transform: translateY(-3px) scale(1.04);
+    background: #fff; border-color: rgba(47,127,209,.35);
+    box-shadow: 0 10px 22px rgba(47,127,209,.18);
+    color: var(--brand);
+  }
+  .ep:active { transform: translateY(0) scale(.96); }
+  .ep.sel {
+    background: var(--brand); color: #fff;
+    box-shadow: 0 10px 24px rgba(47,127,209,.4);
+    border-color: var(--brand);
+  }
+  .ep.sel::after {
+    content: ""; position: absolute; margin-top: 34px;
+    width: 5px; height: 5px; border-radius: 50%; background: #fff;
+  }
+  .ep { position: relative; }
+  .demo-label { font-size: 11px; color: var(--ink3); margin-top: 4px; }
+  .foot { text-align: center; color: var(--ink3); font-size: 11px; margin-top: 36px; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 12px; background: #EEF2F7; padding: 1px 6px; border-radius: 6px;
+  }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+  .pill {
+    padding: 8px 14px; border-radius: 999px; background: var(--card);
+    box-shadow: 3px 3px 10px rgba(163,177,198,.3); font-size: 12px; color: var(--ink2);
+    cursor: pointer; transition: transform .15s, background .15s, color .15s;
+  }
+  .pill:hover { transform: translateY(-2px); color: var(--brand); }
+  .pill.on { background: var(--brand); color: #fff; }
+</style>
+</head>
+<body>
+<p data-aigc-mark="1" style="margin:0 0 8px;font-size:10px;line-height:1.3;color:#6b6560;font-weight:400;">AI生成</p>
+
+<div class="wrap">
+  <h1>星映 2.0 · 交互升级报告</h1>
+  <p class="sub">
+    苹果系统交互调研 × 全站交互审计 × 动效音效矩阵 ｜
+    范围：桌面 / 手机 / TV ｜ <strong>本文不包含代码实现</strong> ｜ 2026-09-28
+  </p>
+
+  <div class="kpi">
+    <div class="i"><div class="n">12</div><div class="l">核心痛点</div></div>
+    <div class="i"><div class="n">8</div><div class="l">Apple 借鉴原则</div></div>
+    <div class="i"><div class="n">26</div><div class="l">动效触点</div></div>
+    <div class="i"><div class="n">14</div><div class="l">音效/触感点</div></div>
+    <div class="i"><div class="n">3</div><div class="l">分期里程碑</div></div>
+  </div>
+
+  <!-- ═══════════ 0 背景 ═══════════ -->
+  <h2><span class="n">0</span>为什么要 2.0</h2>
+  <div class="card">
+    <p style="font-size:14px;color:var(--ink2)">
+      v1 解决了「能播、三端一致、源引擎可用」，但<strong>交互反馈层几乎空白</strong>：
+      选集看不出选中、按下去没有确认感、全局无动效语言、无音效/触感。
+      这不是小修，而是<strong>感知质量</strong>的系统升级 —— 苹果把这套叫
+      <em>Delight / Feedback / State</em>。
+    </p>
+    <div class="callout">
+      <strong>用户原话：</strong>「鼠标选集的时候要有反应，当前情况选到哪一集都不清楚，
+      可以使用 iOS 系统选择软件导航栏时的反馈方式」—— 这是 2.0 的第一优先级。
+    </div>
+    <h3>v1 自我反思</h3>
+    <table>
+      <tr><th>层</th><th>v1 问题</th><th>根因</th></tr>
+      <tr><td>状态可见性</td><td>选集/筛选/内核选中态弱或无</td><td>只做了功能态，没做「选中态 + 过渡态」</td></tr>
+      <tr><td>操作反馈</td><td>点击无缩放/波纹弱、无声音</td><td>未建立全局动效/音效规范</td></tr>
+      <tr><td>空间引导</td><td>列表/详情/播放切换生硬</td><td>缺共享元素、缺弹性曲线</td></tr>
+      <tr><td>错误反馈</td><td>仅 SnackBar 文本</td><td>无图标动效、无可执行动作入口</td></tr>
+      <tr><td>一致性</td><td>桌面 Hover、TV 焦点、手机 Touch 三套半成品</td><td>无统一 Interaction Token</td></tr>
+    </table>
+  </div>
+
+  <!-- ═══════════ 1 Apple 调研 ═══════════ -->
+  <h2><span class="n">1</span>苹果系统交互调研（HIG / iOS / macOS）</h2>
+  <div class="card">
+    <h3>1.1 选择反馈（Segmented / Tab / Picker）</h3>
+    <table>
+      <tr><th>模式</th><th>苹果做法</th><th>可迁移到星映</th></tr>
+      <tr>
+        <td><strong>Segmented Control</strong></td>
+        <td>滑动指示条（spring）、文字从 55%→100% 透明度、选中底填充</td>
+        <td>分类 Chip、线路 Tab、播放引擎单选</td>
+      </tr>
+      <tr>
+        <td><strong>Tab Bar</strong></td>
+        <td>图标弹性放大、色变、可选 <code>UISelectionFeedbackGenerator</code></td>
+        <td>左侧导航、TV 焦点、底部条</td>
+      </tr>
+      <tr>
+        <td><strong>Picker / Wheel</strong></td>
+        <td>滚动停靠刻度 + 轻触感 tick</td>
+        <td>选集横滑、倍速、音量</td>
+      </tr>
+      <tr>
+        <td><strong>App 图标 / 控件</strong></td>
+        <td>按下 scale≈0.96、抬起 spring 回弹、阴影衰减</td>
+        <td><strong>选集格子、海报、按钮全局统一</strong></td>
+      </tr>
+    </table>
+    <h3>1.2 动效曲线（必须锁 Token）</h3>
+    <ul class="plain">
+      <li><strong>Spring</strong>：response 0.25–0.45s，damping 0.8–0.9（iOS 17 <code>spring(duration:bounce:)</code>）</li>
+      <li><strong>Ease-out</strong> 出场 / <strong>ease-in</strong> 入场；转场 300–350ms</li>
+      <li><strong>缩放</strong>：Hover/选中 1.03–1.06，按下 0.94–0.97，TV 焦点 1.03</li>
+      <li><strong>位移</strong>：Hover 上浮 2–4px + 阴影加深 20–30%</li>
+      <li><strong>共享元素</strong>（SwiftUI matchedGeometry）：海报 → 详情小海报</li>
+    </ul>
+    <h3>1.3 音效 / 触感（iOS 精神，桌面用音效代替 Taptic）</h3>
+    <table>
+      <tr><th>场景</th><th>iOS</th><th>星映 2.0 桌面</th><th>星映 2.0 触屏</th></tr>
+      <tr><td>选中刻度</td><td>UISelectionFeedback light</td><td>极轻 tick 音（可关）</td><td>触感 selection</td></tr>
+      <tr><td>按钮确认</td><td>impact(.light/.rigid)</td><td>click 轻响 + 缩放</td><td>impact light</td></tr>
+      <tr><td>成功/完成</td><td>通知型触感</td><td>短促上升音</td><td>success 触感</td></tr>
+      <tr><td>错误</td><td>警告型</td><td>低频短音 + 图标抖动</td><td>warning 触感</td></tr>
+      <tr><td>刷新/加载</td><td>无音或极轻</td><td>静音（避免烦躁）</td><td>可选 tick</td></tr>
+      <tr><td>全屏/沉浸</td><td>视图折叠动画</td><td>无音，纯动效</td><td>同左</td></tr>
+    </table>
+    <div class="callout">
+      苹果原则：<strong>音效只用于「状态改变的确认」</strong>，不要用在持续动画上；触感/音效必须可在设置里关掉。
+    </div>
+    <h3>1.4 其它值得抄</h3>
+    <ul class="plain">
+      <li><strong>Long Press</strong> → Context Menu（iOS）：选集长按出「播放/收藏/标记已看」</li>
+      <li><strong>Pull to Refresh</strong>：分类页下拉刷新</li>
+      <li><strong>Live Activities / 状态胶囊</strong>：播放中角标「第 N 集」</li>
+      <li><strong>Haptics on scroll</strong>：分页边界轻 tick</li>
+      <li><strong>Reduce Motion</strong>：尊重系统「减弱动态效果」，降级为淡入淡出</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════ 2 选集专项 ═══════════ -->
+  <h2><span class="n">2</span>选集交互 2.0（P0 · 你点名的问题）</h2>
+  <div class="card">
+    <h3>现状 → 目标</h3>
+    <table>
+      <tr><th></th><th>现状</th><th>2.0 目标（对标 iOS Segmented / App 库）</th></tr>
+      <tr>
+        <td>悬停</td>
+        <td>几乎无变化</td>
+        <td>上浮 3px + 轻微放大 + 描边/阴影 + 品牌色文字</td>
+      </tr>
+      <tr>
+        <td>选中</td>
+        <td>不明显</td>
+        <td><strong>品牌蓝填充</strong> + 白字 + 下方圆点/勾 + 阴影 + 入场 spring</td>
+      </tr>
+      <tr>
+        <td>按下</td>
+        <td>无</td>
+        <td>scale 0.96 瞬时压缩，松开弹回</td>
+      </tr>
+      <tr>
+        <td>切换</td>
+        <td>无过渡</td>
+        <td>指示器滑动 / 色块 morph；旧选中淡出</td>
+      </tr>
+      <tr>
+        <td>反馈</td>
+        <td>无</td>
+        <td>触感/轻响 + 选中集高亮在海报角标「EP.n」</td>
+      </tr>
+    </table>
+    <h3>试一下（示意，非最终稿）</h3>
+    <div class="eps" id="eps">
+      <div class="ep sel">1</div><div class="ep">2</div><div class="ep">3</div>
+      <div class="ep">4</div><div class="ep">5</div><div class="ep">6</div>
+      <div class="ep">7</div><div class="ep">8</div><div class="ep">9</div>
+      <div class="ep">10</div>
+    </div>
+    <p class="demo-label">悬停抬起 · 选中填充与圆点 · 按下压缩（本页仅 CSS 示意）</p>
+    <h3>交互细则</h3>
+    <ul class="plain">
+      <li><strong>选中态唯一</strong>：当前播放集 &gt; 上次观看集 &gt; 悬停态（优先级）</li>
+      <li><strong>续播集</strong>加「继续」角标，与「选中」区分</li>
+      <li><strong>已看完</strong>降透明度 + 对勾，避免和未看混淆</li>
+      <li>横滑列表吸附（iOS 惯性）；首尾弹性 overscroll 8–12px</li>
+      <li>键盘：`←/→` 移动焦点，`Enter` 播放；TV：焦点环 + 1.03 放大</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════ 3 全站审计 ═══════════ -->
+  <h2><span class="n">3</span>全站交互审计（动效 / 音效适配矩阵）</h2>
+  <div class="card">
+    <table>
+      <tr><th>#</th><th>触点</th><th>动效</th><th>音效/触感</th><th>优先级</th></tr>
+      <tr><td>1</td><td>选集格子</td><td>Hover 上浮 / 按下 0.96 / 选中 spring 填充</td><td>selection tick</td><td><span class="tag bad">P0</span></td></tr>
+      <tr><td>2</td><td>海报卡</td><td>Hover 1.03（已有）+ 阴影 + 标题淡入</td><td>无</td><td><span class="tag">P0</span></td></tr>
+      <tr><td>3</td><td>主按钮（立即播放）</td><td>按压 scale + 波纹/填充</td><td>click 轻响</td><td><span class="tag">P0</span></td></tr>
+      <tr><td>4</td><td>播放/暂停</td><td>图标 morph（▶↔❚❚）</td><td>click</td><td><span class="tag">P0</span></td></tr>
+      <tr><td>5</td><td>进度拖拽</td><td>拇指放大 + 时间气泡（已有）</td><td>无</td><td><span class="tag">P0</span></td></tr>
+      <tr><td>6</td><td>全屏切换</td><td>控件淡出 + 视频容器填充</td><td>无</td><td><span class="tag">P0</span></td></tr>
+      <tr><td>7</td><td>分类 Chip</td><td>选中滑块 / 色变</td><td>selection</td><td><span class="tag">P0</span></td></tr>
+      <tr><td>8</td><td>导航切换</td><td>页面 fade+slide 12px</td><td>无</td><td><span class="tag">P0</span></td></tr>
+      <tr><td>9</td><td>Tab / 侧栏</td><td>胶囊指示器滑动</td><td>selection</td><td><span class="tag">P1</span></td></tr>
+      <tr><td>10</td><td>详情入场</td><td>海报共享元素 + 文字 stagger 40ms</td><td>无</td><td><span class="tag">P1</span></td></tr>
+      <tr><td>11</td><td>收藏</td><td>心形 pop 1.2→1.0</td><td>success 短音</td><td><span class="tag">P1</span></td></tr>
+      <tr><td>12</td><td>换源对话框</td><td>底部弹起 spring</td><td>无</td><td><span class="tag">P1</span></td></tr>
+      <tr><td>13</td><td>测活进度</td><td>行内进度条 + 完成勾绘制</td><td>完成 tick</td><td><span class="tag">P1</span></td></tr>
+      <tr><td>14</td><td>导入成功</td><td>徽章滑入 + 数字 count-up</td><td>success</td><td><span class="tag">P1</span></td></tr>
+      <tr><td>15</td><td>错误 SnackBar</td><td>图标抖动 + 滑入</td><td>error 低音</td><td><span class="tag">P1</span></td></tr>
+      <tr><td>16</td><td>空状态</td><td>插画淡入 + 按钮 pulse 一次</td><td>无</td><td><span class="tag">P1</span></td></tr>
+      <tr><td>17</td><td>下一集横幅</td><td>滑入 + 倒计时环</td><td>提醒音（可关）</td><td><span class="tag">P1</span></td></tr>
+      <tr><td>18</td><td>静音/音量</td><td>图标切换 + 音量条</td><td>无（避免自反馈）</td><td><span class="tag">P1</span></td></tr>
+      <tr><td>19</td><td>倍速</td><td>菜单弹出 spring</td><td>selection</td><td><span class="tag warn">P2</span></td></tr>
+      <tr><td>20</td><td>搜索结果出现</td><td>列表 stagger 30ms</td><td>无</td><td><span class="tag warn">P2</span></td></tr>
+      <tr><td>21</td><td>分页加载</td><td>骨架屏 shimmer</td><td>无</td><td><span class="tag warn">P2</span></td></tr>
+      <tr><td>22</td><td>拖拽排序源</td><td>抬起放大 + 邻居让位</td><td>impact</td><td><span class="tag warn">P2</span></td></tr>
+      <tr><td>23</td><td>TV 焦点</td><td>1.03 放大（已有）+ 光晕</td><td>导航 tick</td><td><span class="tag warn">P2</span></td></tr>
+      <tr><td>24</td><td>深色/浅色切换</td><td>颜色交叉溶解 250ms</td><td>无</td><td><span class="tag warn">P2</span></td></tr>
+      <tr><td>25</td><td>窗口最大化</td><td>内容区弹性重排</td><td>无</td><td><span class="tag warn">P2</span></td></tr>
+      <tr><td>26</td><td>退出播放</td><td>视频缩回详情海报（理想）</td><td>无</td><td><span class="tag warn">P2</span></td></tr>
+    </table>
+  </div>
+
+  <!-- ═══════════ 4 设计原则 ═══════════ -->
+  <h2><span class="n">4</span>2.0 交互设计原则（锁死）</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>原则</h3>
+      <ul class="plain">
+        <li><strong>可感知</strong>：任何状态变化必须有视觉/触感/音效之一</li>
+        <li><strong>短</strong>：反馈 &lt; 300ms，禁止阻塞操作</li>
+        <li><strong>一致</strong>：同一动作三端同一套 token</li>
+        <li><strong>可关</strong>：音效/动效在设置可降级（含系统 Reduce Motion）</li>
+        <li><strong>不抢戏</strong>：视频区动效克制，列表/详情可更活泼</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Interaction Tokens</h3>
+      <table>
+        <tr><td>scale.hover</td><td>1.03</td></tr>
+        <tr><td>scale.press</td><td>0.96</td></tr>
+        <tr><td>scale.focus (TV)</td><td>1.03</td></tr>
+        <tr><td>duration.micro</td><td>120–180ms</td></tr>
+        <tr><td>duration.base</td><td>250–350ms</td></tr>
+        <tr><td>spring</td><td>0.35s / bounce 0.15</td></tr>
+        <tr><td>easing</td><td>cubic-bezier(.2,.8,.2,1)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════ 5 分期 ═══════════ -->
+  <h2><span class="n">5</span>2.0 实施分期</h2>
+  <div class="card">
+    <table>
+      <tr><th>阶段</th><th>内容</th><th>产出</th></tr>
+      <tr>
+        <td><span class="tag bad">M1</span><br/>反馈底座</td>
+        <td>Interaction Tokens；选集/Chip/按钮三态；音效与触感引擎（可关）；Reduce Motion</td>
+        <td>选集「一眼知道选哪集」</td>
+      </tr>
+      <tr>
+        <td><span class="tag warn">M2</span><br/>流转动效</td>
+        <td>导航转场、详情入场、播放全屏、收藏 pop、错误抖动、下一集横幅</td>
+        <td>全站有「运动语言」</td>
+      </tr>
+      <tr>
+        <td><span class="tag">M3</span><br/>质感与声音</td>
+        <td>骨架屏、count-up、共享元素、拖拽排序、TV 光晕、完整音效包</td>
+        <td>接近 iOS 的「爽感」</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ═══════════ 6 验收 ═══════════ -->
+  <h2><span class="n">6</span>验收标准</h2>
+  <div class="card">
+    <ul class="plain">
+      <li>选集：3 秒内任意用户能说出「当前第几集 / 上次看到哪」</li>
+      <li>所有可点元素：Hover / Press / Selected 三态齐全</li>
+      <li>动效总时长可感知但不拖沓；开启「减弱动效」后无缩放弹跳</li>
+      <li>音效默认轻、可关；播放中不叠加持续噪音</li>
+      <li>三端同一 Token；TV 以焦点态替代 Hover</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>待你拍板</h3>
+    <ul class="plain">
+      <li>选集风格：iOS 胶囊填充（推荐）vs 轻描边 + 底部指示条？</li>
+      <li>音效：默认开轻 tick，还是默认关、设置里开？</li>
+      <li>M1 是否只先做桌面，还是三端一起？</li>
+      <li>是否做「海报 → 播放页」共享元素转场？</li>
+    </ul>
+    <p class="demo-label" style="margin-top:12px">
+      按你确认后再写代码。本报告为 <strong>设计与调研</strong>，不含 Flutter 实现。
+    </p>
+  </div>
+
+  <p class="foot">星映 2.0 交互升级报告 · 对标 iOS HIG · 2026-09-28</p>
+</div>
+<script>
+  // 选集示意交互
+  document.getElementById('eps').addEventListener('click', (e) => {
+    const el = e.target.closest('.ep');
+    if (!el) return;
+    document.querySelectorAll('.ep').forEach((n) => n.classList.remove('sel'));
+    el.classList.add('sel');
+  });
+</script>
+</body>
+</html>

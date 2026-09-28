@@ -26,6 +26,7 @@ class DetailPage extends StatefulWidget {
 class _DetailPageState extends State<DetailPage> {
   late final VideoSource _source = widget.services.sourceFor(widget.def);
   List<Episode> _lastEpisodes = const [];
+  int _selectedEp = 0;
   String? _lastLineId;
   late Future<WorkDetail> _detail;
 
@@ -79,15 +80,14 @@ class _DetailPageState extends State<DetailPage> {
                   runSpacing: 8,
                   children: [
                     for (final ep in line.episodes)
-                      OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: StarColors.ink2,
-                          side: const BorderSide(color: StarColors.line),
-                          minimumSize: const Size(0, 44),
-                        ),
-                        onPressed: () => _play(context, ep.index, ep.name, line.lineId,
-                            episodes: line.episodes),
-                        child: Text(ep.name),
+                      EpisodeChip(
+                        label: ep.name,
+                        selected: ep.index == _selectedEp,
+                        onTap: () {
+                      setState(() => _selectedEp = ep.index);
+                      _play(context, ep.index, ep.name, line.lineId,
+                            episodes: line.episodes);
+                    },
                       ),
                   ],
                 ),

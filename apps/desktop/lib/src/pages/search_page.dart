@@ -237,7 +237,15 @@ class _SearchPageState extends State<SearchPage> {
         final def = _defsByKey[first.sourceKey];
         final sourceNames =
             group.items.map((c) => _defsByKey[c.sourceKey]?.name ?? c.sourceKey);
-        return ListTile(
+        return TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: 1),
+          duration: Duration(milliseconds: 260 + (i % 8) * 35),
+          curve: Curves.easeOutCubic,
+          builder: (context, v, child) => Opacity(
+            opacity: v.clamp(0.0, 1.0),
+            child: Transform.translate(offset: Offset(0, 10 * (1 - v)), child: child),
+          ),
+          child: ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           leading: ClipRRect(
             borderRadius: BorderRadius.circular(6),
@@ -285,6 +293,7 @@ class _SearchPageState extends State<SearchPage> {
           onTap: def == null
               ? null
               : () => widget.onOpenDetail(def, first),
+        ),
         );
       },
     );
