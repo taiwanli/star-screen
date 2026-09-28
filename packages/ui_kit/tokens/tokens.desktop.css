@@ -1,0 +1,36 @@
+/* 星映 · tokens.desktop.css —— 桌面端尺寸覆盖（规范 §5.1） */
+:root {
+  --sys-font-size-body: 14px;
+  --sys-font-size-title-1: 28px;
+  --sys-font-size-title-2: 22px;
+  --sys-font-size-title-3: 18px;
+  --sys-font-size-caption: 12px;
+
+  --sys-size-control-height-sm: 32px;
+  --sys-size-control-height-md: 36px;
+  --sys-size-control-height-lg: 40px;
+  --sys-size-touch-target-min: 24px;
+
+  --sys-space-page-margin: 24px;
+  --sys-space-gap: 16px;
+  --sys-content-max-width: 1440px;
+  --sys-window-min-width: 1024px;
+  --sys-window-min-height: 640px;
+
+  --sys-radius-sm: 4px;
+  --sys-radius-md: 8px;
+  --sys-radius-lg: 12px;
+  --sys-radius-xl: 16px;
+
+  --sys-border-width-base: 1px;
+  --sys-border-width-focus: 2px;
+
+  --sys-size-card-poster: 160px 240px;
+  --sys-size-card-landscape: 224px 126px;
+  --sys-size-card-progress-height: 2px;
+  --sys-size-nav-width: 240px;
+  --sys-size-nav-width-collapsed: 64px;
+  --sys-size-topbar-height: 56px;
+  --sys-size-statusbar-height: 28px;
+  --sys-size-icon: 16px;
+}

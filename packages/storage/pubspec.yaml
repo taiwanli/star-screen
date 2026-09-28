@@ -1,0 +1,16 @@
+name: star_storage
+description: >-
+  本地存储：SQLite schema（schema.sql 为唯一事实来源）与 KV/库抽象接口。
+  drift 代码生成接入后由 StarDatabase 实现（里程碑 M0 收尾项）。
+version: 0.1.0-dev.1
+publish_to: none
+environment:
+  sdk: ^3.13.0
+resolution: workspace
+dev_dependencies:
+  build_runner: ^2.16.1
+  drift_dev: ^2.35.0
+  test: ^1.25.0
+dependencies:
+  drift: ^2.35.0
+  sqlite3: ^3.6.0

@@ -1,0 +1,30 @@
+/* 星映 · tokens.android.css —— 手机端尺寸覆盖（规范 §5.2） */
+:root {
+  --sys-font-size-body: 16sp;
+  --sys-font-size-title-1: 24sp;
+  --sys-font-size-title-2: 20sp;
+  --sys-font-size-title-3: 18sp;
+  --sys-font-size-caption: 12sp;
+
+  --sys-size-control-height-sm: 40dp;
+  --sys-size-control-height-md: 48dp;
+  --sys-size-control-height-lg: 56dp;
+  --sys-size-touch-target-min: 48dp;
+
+  --sys-space-page-margin: 16dp;
+  --sys-space-gap: 16dp;
+  --sys-space-gesture-zone: 20dp;   /* 系统返回手势禁区：左右各 20dp 内无交互 */
+  --sys-progress-touch-area: 44dp;  /* 播放进度条触摸热区（视觉 3-4dp） */
+
+  --sys-radius-sm: 4dp;
+  --sys-radius-md: 8dp;
+  --sys-radius-lg: 12dp;
+  --sys-radius-xl: 16dp;
+
+  --sys-size-card-poster: 112px 168px;
+  --sys-size-card-landscape: 168px 94px;
+  --sys-size-card-progress-height: 2dp;
+  --sys-size-tabbar-height: 80dp;
+  --sys-size-appbar-height: 56dp;
+  --sys-size-icon: 24dp;
+}

@@ -1,0 +1,16 @@
+{
+  "code": 1,
+  "msg": "数据列表",
+  "page": 1,
+  "pagecount": 8018,
+  "limit": "20",
+  "total": 160358,
+  "class": [
+    { "type_id": 6, "type_pid": 1, "type_name": "子类1" },
+    { "type_id": 38, "type_pid": 2, "type_name": "剧情" }
+  ],
+  "list": [
+    { "vod_id": 163403, "vod_name": "乌鸦俱乐部", "type_id": 38, "type_name": "剧情", "vod_en": "wuyajulebu", "vod_time": "2026-09-26 11:16:36", "vod_remarks": "更新至第2集", "vod_play_from": "bfzym3u8" },
+    { "vod_id": 134471, "vod_name": "光阴之外", "type_id": 6, "type_name": "子类1", "vod_en": "gyzw", "vod_time": "2026-09-26 10:35:20", "vod_remarks": "更新至41集", "vod_play_from": "snm3u8" }
+  ]
+}

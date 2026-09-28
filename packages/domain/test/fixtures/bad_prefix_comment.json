@@ -1,0 +1,10 @@
+// 以下内容为互联网收集，只为自用。
+// last updated: 2026-08
+
+{
+  "spider": "./jar/demo.jar;md5;0123456789abcdef0123456789abcdef",
+  "sites": [
+    { "key": "ok1", "name": "尾逗号容错", "type": 1, "api": "https://ok.example.com/api.php/provide/vod" },
+  ],
+  "lives": [],
+}

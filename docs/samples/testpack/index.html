@@ -1,0 +1,184 @@
+<!-- AI生成 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StarRule 测试源包（虚构）</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #1a2332;
+      --ink: #e7ecf3;
+      --muted: #8b9bb4;
+      --accent: #3d8bfd;
+      --ok: #3dd68c;
+      --warn: #e6a23c;
+      --line: #2a3548;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font: 15px/1.6 -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 24px 16px 48px;
+    }
+    .wrap { max-width: 960px; margin: 0 auto; }
+    h1 { font-size: 22px; font-weight: 600; margin: 0 0 8px; }
+    .sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+    .banner {
+      background: #1c2a20;
+      border: 1px solid #2d4a38;
+      color: var(--ok);
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+    .card h3 { margin: 0 0 6px; font-size: 15px; font-weight: 600; }
+    .card .id {
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 11px;
+      color: var(--accent);
+      word-break: break-all;
+    }
+    .card p { margin: 8px 0 0; font-size: 12px; color: var(--muted); }
+    .tags { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #243044;
+      color: var(--muted);
+    }
+    .tag.hl { background: #1e3a5f; color: var(--accent); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 28px;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+    }
+    th { color: var(--muted); font-weight: 500; font-size: 12px; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 12px;
+      background: #243044;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .files a {
+      display: block;
+      color: var(--accent);
+      text-decoration: none;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+    }
+    .files a:hover { text-decoration: underline; }
+    .note { color: var(--warn); font-size: 12px; margin-top: 16px; }
+  </style>
+</head>
+<body>
+<p data-aigc-mark="1" style="margin:0 0 8px;font-size:10px;line-height:1.3;color:#6b6560;font-weight:400;">AI生成</p>
+
+  <div class="wrap">
+    <h1>StarRule 测试源包（虚构）</h1>
+    <div class="sub">用于导入 / 校验 / 测活链路 / UI 回归 · 生成器 tools/gen_starrule_testpack.py</div>
+
+    <div class="banner">
+      ⚠ 全部域名均为保留字（example.com）。仅测规则引擎，<strong>不指向任何真实站点</strong>，不用于观看内容。
+    </div>
+
+    <div class="grid" id="cards"></div>
+
+    <h2 style="font-size:16px;font-weight:600;margin:0 0 10px">导入方式</h2>
+    <table>
+      <tr><th>方式</th><th>操作</th></tr>
+      <tr><td>单文件</td><td>源管理 → 添加内容源 → 选择 <code>testpack.hand4.star.json</code></td></tr>
+      <tr><td>压力包</td><td>选择 <code>testpack.50.star.json</code>（50 站）</td></tr>
+      <tr><td>深链</td><td><code>starrule://import?url=…</code>（需 HTTP 可访问）</td></tr>
+      <tr><td>校验</td><td><code>dart run packages/domain/bin/starrule_lint.dart &lt;file&gt;</code></td></tr>
+    </table>
+
+    <h2 style="font-size:16px;font-weight:600;margin:0 0 10px">本目录文件</h2>
+    <div class="files" id="files"></div>
+
+    <p class="note">重新生成：python tools/gen_starrule_testpack.py --count 50</p>
+  </div>
+  <script>
+    const samples = [
+      {
+        name: "HTML 4K 模板站",
+        id: "test.html.4k.demo",
+        desc: "选择器链、双线路 :eq(#line)、筛选 {filter_year}、hasMore:auto",
+        tags: ["html", "4K", "分页"],
+      },
+      {
+        name: "JSON API 站",
+        id: "test.json.api.demo",
+        desc: "json: 路径、pageCount 分页、fromField/urlField 多线路",
+        tags: ["json", "分页", "搜索"],
+      },
+      {
+        name: "CMS 快捷源",
+        id: "test.cms.quick.demo",
+        desc: "sourceType:cms 协议内建四链路，规则块可省略",
+        tags: ["cms", "协议"],
+      },
+      {
+        name: "个人 Alist 挂载",
+        id: "test.alist.personal.demo",
+        desc: "目录树 id=path、flat 单线路、hasMore:none（自建库）",
+        tags: ["json", "Alist", "个人"],
+      },
+    ];
+    const files = [
+      "README.md",
+      "test.html.4k.demo.star.json",
+      "test.json.api.demo.star.json",
+      "test.cms.quick.demo.star.json",
+      "test.alist.personal.demo.star.json",
+      "testpack.hand4.star.json",
+      "testpack.50.star.json",
+    ];
+    const cards = document.getElementById("cards");
+    for (const s of samples) {
+      const el = document.createElement("div");
+      el.className = "card";
+      el.innerHTML =
+        "<h3>" + s.name + "</h3>" +
+        '<div class="id">' + s.id + "</div>" +
+        "<p>" + s.desc + "</p>" +
+        '<div class="tags">' +
+        s.tags.map((t) => '<span class="tag hl">' + t + "</span>").join("") +
+        "</div>";
+      cards.appendChild(el);
+    }
+    const fl = document.getElementById("files");
+    for (const f of files) {
+      const a = document.createElement("a");
+      a.href = f;
+      a.textContent = f;
+      fl.appendChild(a);
+    }
+  </script>
+</body>
+</html>

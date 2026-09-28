@@ -1,0 +1,17 @@
+name: star_ui_kit
+description: >-
+  星映设计系统：三层设计令牌（design-tokens.json + tokens.*.css 为唯一来源）、
+  StarTheme/StarTokens（桌面/手机/TV 三档尺寸）与基础组件。
+  规范依据：docs/07-三端UI界面设计.md 与《三端统一设计规范》v1.1。
+version: 0.1.0-dev.1
+publish_to: none
+environment:
+  sdk: ^3.13.0
+resolution: workspace
+dependencies:
+  flutter:
+    sdk: flutter
+  file_selector: ^1.0.3
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

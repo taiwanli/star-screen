@@ -1,0 +1,5 @@
+央视频道,#genre#
+CCTV-1,http://[2408:8540::1]/pltv/1.m3u8
+CCTV-2,http://[2408:8540::1]/pltv/2.m3u8#http://192.168.1.10:8080/cctv2.m3u8
+卫视频道,#genre#
+湖南卫视,http://[2408:8540::1]/pltv/hntv.m3u8

@@ -1,0 +1,16 @@
+name: star_player
+description: >-
+  播放器抽象：PlayerController 契约、内核枚举（EXO/IJK/系统/libmpv）与
+  失败回退链定义。平台实现（media3/IJK/media_kit）在 M1 里程碑接入。
+version: 0.1.0-dev.1
+publish_to: none
+environment:
+  sdk: ^3.13.0
+resolution: workspace
+dev_dependencies:
+  test: ^1.25.0
+dependencies:
+  video_player: ^2.9.2
+  media_kit: ^1.2.6
+  star_domain:
+    path: ../domain

@@ -1,0 +1,5 @@
+#EXTM3U x-tvg-url="https://epg.example.com/e.xml" catchup="append" catchup-source="?playseek=${(b)yyyyMMddHHmmss}-${(e)yyyyMMddHHmmss}"
+#EXTINF:-1 tvg-id="CCTV1" tvg-name="CCTV1" tvg-logo="https://logo.example.com/CCTV1.png" group-title="央视频道",CCTV-1综合
+http://[2408:8540::1]/pltv/cctv1.m3u8
+#EXTINF:-1 tvg-name="CCTV2" tvg-logo="https://logo.example.com/CCTV2.png" group-title="央视频道",CCTV-2财经
+http://[2408:8540::1]/pltv/cctv2.m3u8

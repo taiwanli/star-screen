@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>星映 · 三端 UI 设计总览</title>
+<style>
+:root{
+  --bg:#0D1015; --surface:#171B21; --hi:#20262E; --line:#2A3038; --line2:#3E454F;
+  --ink:#F7F8FA; --ink2:#CBD0D8; --ink3:#9BA3AF; --ink4:#6E7785;
+  --brand:#1F6FB4; --brand2:#4B8CCB;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#06080B;color:var(--ink);font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:16px;line-height:1.7;padding:64px 24px}
+.wrap{max-width:1080px;margin:0 auto}
+.eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);font-weight:600}
+h1{font-size:40px;font-weight:650;letter-spacing:-.02em;margin:10px 0 14px}
+.lede{color:var(--ink2);max-width:74ch;font-size:17px}
+.boards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:44px 0 20px}
+.bcard{background:var(--surface);border:1px solid var(--line2);border-radius:16px;padding:26px;display:block;color:var(--ink);text-decoration:none;transition:transform .2s cubic-bezier(.2,0,0,1),border-color .2s}
+.bcard:hover{transform:translateY(-4px);border-color:var(--brand2)}
+.bcard .tag{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--brand2);font-family:Consolas,monospace}
+.bcard h2{font-size:21px;font-weight:650;margin:8px 0 6px}
+.bcard p{font-size:14px;color:var(--ink3);line-height:1.6}
+.bcard .list{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+.bcard .list span{font-size:11.5px;border:1px solid var(--line);border-radius:4px;padding:2px 8px;color:var(--ink4)}
+.bcard .go{display:inline-block;margin-top:16px;color:var(--brand2);font-size:14px;font-weight:600}
+.sect{margin-top:48px}
+.sect h3{font-size:22px;font-weight:650;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.decs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.dec{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+.dec b{display:block;margin-bottom:6px;font-size:15.5px}
+.dec p{font-size:13.5px;color:var(--ink3);line-height:1.65}
+.dec p em{color:var(--ink2);font-style:normal}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
+th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--line)}
+thead th{background:var(--surface);color:var(--ink2);font-weight:600;font-size:12.5px}
+td code{font-family:Consolas,monospace;font-size:12.5px;color:#9CC3E8;background:#0B0F15;padding:1px 6px;border-radius:4px}
+.foot{margin-top:52px;color:var(--ink4);font-size:13.5px;border-top:1px solid var(--line);padding-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">StarScreen · UI Design Boards · v1.0</p>
+  <h1>星映 · 三端 UI 界面设计</h1>
+  <p class="lede">依据《三端统一设计规范》v1.1（影音产品版）制作的星映三端高保真界面设计稿：Windows 桌面 / Android 手机 / TV 电视。统一层（品牌色、术语、字阶比例、间距节奏、卡片体系、角标语言、详情页区块顺序、跨端续播语义）三端锁死；差异化层（导航结构、信息密度、输入模型、尺寸换算）按端分化。</p>
+
+  <div class="boards">
+    <a class="bcard" href="./desktop.html">
+      <span class="tag">Desktop · 7 屏</span>
+      <h2>Windows 桌面端</h2>
+      <p>指针驱动 · 效率场景。左侧导航 240px + 顶栏 56px，正文 14px，数据表格与批量选择，快捷键基线全覆盖。</p>
+      <div class="list"><span>首页</span><span>分类</span><span>聚合搜索</span><span>详情</span><span>播放器</span><span>我的</span><span>源管理</span></div>
+      <span class="go">打开设计稿 →</span>
+    </a>
+    <a class="bcard" href="./mobile.html">
+      <span class="tag">Android · 6 屏 + 五态</span>
+      <h2>Android 手机端</h2>
+      <p>触控驱动 · 随身场景。底部标签栏 4 项，正文 16sp，触控 ≥48dp，播放器手势全集，主操作吸底，Snackbar 可撤销。</p>
+      <div class="list"><span>首页</span><span>分类</span><span>搜索</span><span>详情</span><span>播放器(横屏)</span><span>我的</span><span>状态示例</span></div>
+      <span class="go">打开设计稿 →</span>
+    </a>
+    <a class="bcard" href="./tv.html">
+      <span class="tag">TV · 7 屏</span>
+      <h2>TV 电视端</h2>
+      <p>焦点驱动 · 客厅场景。顶部栏目 + 书架轨道，1080p 基准正文 24px，仅 16:9 横版卡，焦点三重信号，OSD 默认焦点在进度条。</p>
+      <div class="list"><span>首页</span><span>分类</span><span>搜索(拼音)</span><span>详情</span><span>播放 OSD</span><span>我的</span><span>设置</span></div>
+      <span class="go">打开设计稿 →</span>
+    </a>
+  </div>
+
+  <div class="sect">
+    <h3>关键设计决策</h3>
+    <div class="decs">
+      <div class="dec"><b>1 · 暗色为产品默认主题，品牌色不变</b><p>媒体消费的平台惯例与项目 03 文档一致。中性色取自规范色板的 950–800 / 300–100 区段，<em>品牌蓝 #1F6FB4 与语义色值严格沿用规范锁死值，三端零色差</em>；亮色主题使用规范原值，作为等价变体保留。</p></div>
+      <div class="dec"><b>2 · TV 端改用「顶部栏目 + 书架轨道」</b><p>此前 03 文档拟定 TV 左侧竖导航；按规范 5.0/5.3 裁决修正为<em>顶部固定栏目 + 横向内容轨道</em>，并统一改用 16:9 横版卡（TV 禁竖版海报）。此变更已同步记录到设计说明书。</p></div>
+      <div class="dec"><b>3 · 三端是同一份观看记录</b><p>三张详情页画的是<em>同一部剧、同一状态</em>：「继续观看 · 第 3 集 12:35」。进度阈值（≥90% 移出 / <5% 不记录 / 误差 ≤5s）三端锁死，对应规范 C1/C2 跨端链路验收。</p></div>
+      <div class="dec"><b>4 · 星映特性按规范语言扩展</b><p>源管理 / 健康度徽标 / 聚合搜索多源卡 / 换源 / 播放内核选择，全部用规范的组件与角标语言表达，新增术语（换源、线路、源管理、播放内核）已增补进术语锁死表；<em>会员与付费模块不适用</em>（星映无会员体系，合规基线）。</p></div>
+    </div>
+  </div>
+
+  <div class="sect">
+    <h3>统一令牌 · 暗色映射（结构沿用规范三层令牌）</h3>
+    <table>
+      <thead><tr><th>令牌</th><th>桌面</th><th>手机</th><th>TV</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><code>sys-color-bg-page</code></td><td><code>#0D1015</code></td><td><code>#0D1015</code></td><td><code>#0D1015</code></td><td>中性 950，三端一致</td></tr>
+        <tr><td><code>sys-color-text-primary</code></td><td><code>#F7F8FA</code></td><td>同左</td><td>同左</td><td>中性 100 / 50</td></tr>
+        <tr><td><code>sys-color-bg-brand</code></td><td><code>#1F6FB4</code></td><td>同左</td><td>同左</td><td>品牌 500，锁死不变</td></tr>
+        <tr><td><code>sys-font-size-body</code></td><td>14px</td><td>16sp</td><td>24px</td><td>级别比例跨端一致</td></tr>
+        <tr><td><code>sys-size-control-height-md</code></td><td>36px</td><td>48dp</td><td>88px</td><td></td></tr>
+        <tr><td><code>sys-space-page-margin</code></td><td>24px</td><td>16dp</td><td>48px</td><td>TV 另有 48px 安全区</td></tr>
+        <tr><td><code>sys-radius-md</code></td><td>8px</td><td>8dp</td><td>12px</td><td>TV 圆角 ×1.5</td></tr>
+        <tr><td><code>sys-border-width-focus</code></td><td>2px 焦点环</td><td>—</td><td>3px 焦点描边</td><td>对比度 ≥3:1</td></tr>
+        <tr><td><code>sys-duration-base</code></td><td>200ms</td><td>200ms</td><td>300ms</td><td>TV ×1.5</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="foot">设计依据：《三端统一设计规范》v1.1（影音产品版）· 《什么是好的 UI》调研报告 ｜ 配套说明：docs/07-三端UI界面设计.md ｜ 星映 StarScreen · 2026-09</p>
+</div>
+</body>
+</html>

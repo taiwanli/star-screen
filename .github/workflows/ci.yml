@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  analyze:
+    name: 静态分析
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      # 注：本机 Windows 中文路径下 flutter analyze 的 LSP 通道有已知问题，
+      # 统一使用 dart analyze（docs/08 §1）。
+      - run: dart analyze
+
+  arch-guard:
+    name: 架构守护（领域层禁 UI 依赖）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - run: dart run tools/check_architecture.dart
+
+  test:
+    name: 单元与组件测试
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      # drift 运行时测试需要 sqlite3 原生库
+      - run: sudo apt-get update && sudo apt-get install -y libsqlite3-dev
+      - run: dart test packages/domain
+      - run: dart test packages/player
+      - run: dart test packages/storage
+      - run: dart test packages/plugins
+      - run: dart test packages/lan
+      - run: flutter test packages/ui_kit
+      - run: flutter test apps/desktop
+      - run: flutter test apps/mobile
+      - run: flutter test apps/tv

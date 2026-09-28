@@ -1,0 +1,54 @@
+/*
+ * 星映 · tokens.base.css —— 跨端不变部分（规范 §8.2 端覆盖机制）
+ * 颜色 / 缓动曲线 / 语义令牌在此定义；尺寸类令牌由 tokens.{desktop,android,tv}.css 覆盖。
+ * 主题机制：:root 为亮色（规范原值），[data-theme="dark"] 为产品默认（docs/07 决策 D1）。
+ * 组件禁止硬编码，只允许引用 --sys-* 变量。
+ */
+:root {
+  /* 亮色变体（规范 v1.1 原值） */
+  --sys-color-bg-page: #FFFFFF;
+  --sys-color-bg-surface: #F7F8FA;
+  --sys-color-bg-raised: #EFF1F4;
+  --sys-color-border: #E6E8EC;
+  --sys-color-border-strong: #D3D7DD;
+  --sys-color-text-primary: #15181E;
+  --sys-color-text-secondary: #3F4650;
+  --sys-color-text-tertiary: #6B7280;
+  --sys-color-text-disabled: #9AA1AB;
+
+  /* 品牌与语义：主题无关、三端锁死（不得被主题覆盖修改） */
+  --ref-color-brand-300: #7BABDD;
+  --ref-color-brand-400: #4B8CCB;
+  --ref-color-brand-500: #1F6FB4;
+  --ref-color-brand-600: #175A93;
+  --sys-color-bg-brand: var(--ref-color-brand-500);
+  --sys-color-bg-brand-hover: var(--ref-color-brand-400);
+  --sys-color-bg-brand-pressed: var(--ref-color-brand-600);
+  --sys-color-semantic-ok: #1F8A4C;
+  --sys-color-semantic-warn: #B26A00;
+  --sys-color-semantic-error: #C0322B;
+  --sys-color-semantic-info: #1F6FB4;
+
+  /* 动效：曲线三端统一，时长按端覆盖 */
+  --sys-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --sys-duration-fast: 120ms;
+  --sys-duration-base: 200ms;
+  --sys-duration-slow: 320ms;
+
+  /* 跨端续播阈值（业务锁死，非视觉令牌） */
+  --star-progress-finished: 0.9;
+  --star-progress-min-record: 0.05;
+  --star-sync-tolerance-sec: 5;
+}
+
+[data-theme="dark"] {
+  --sys-color-bg-page: #0D1015;
+  --sys-color-bg-surface: #171B21;
+  --sys-color-bg-raised: #20262E;
+  --sys-color-border: #2A3038;
+  --sys-color-border-strong: #3E454F;
+  --sys-color-text-primary: #F7F8FA;
+  --sys-color-text-secondary: #CBD0D8;
+  --sys-color-text-tertiary: #9BA3AF;
+  --sys-color-text-disabled: #6E7785;
+}

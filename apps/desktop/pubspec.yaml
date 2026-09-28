@@ -1,0 +1,35 @@
+name: star_desktop
+description: 星映 Windows 桌面端（指针 + 键盘 · 效率场景，docs/07 §3）。
+publish_to: none
+version: 0.1.0-dev.45
+environment:
+  sdk: ^3.13.0
+resolution: workspace
+dependencies:
+  video_player: ^2.9.2
+  drift: ^2.35.0
+  flutter:
+    sdk: flutter
+  flutter_js: ^0.8.7
+  media_kit: ^1.2.6
+  window_manager: ^0.4.3
+  media_kit_libs_windows_video: ^1.0.11
+  media_kit_video: ^2.0.1
+  star_domain:
+    path: ../../packages/domain
+  star_lan:
+    path: ../../packages/lan
+  star_player:
+    path: ../../packages/player
+  star_plugins:
+    path: ../../packages/plugins
+  star_storage:
+    path: ../../packages/storage
+  star_ui_kit:
+    path: ../../packages/ui_kit
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+flutter:
+  uses-material-design: true

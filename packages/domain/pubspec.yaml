@@ -1,0 +1,13 @@
+name: star_domain
+description: >-
+  星映领域层：统一源契约（VideoSource）、领域模型与订阅配置解析管线。
+  架构红线：零 Flutter/UI 依赖（docs/03 §2），仅允许纯 Dart。
+version: 0.1.0-dev.1
+publish_to: none
+environment:
+  sdk: ^3.13.0
+resolution: workspace
+dev_dependencies:
+  test: ^1.25.0
+dependencies:
+  xml: ^7.0.1

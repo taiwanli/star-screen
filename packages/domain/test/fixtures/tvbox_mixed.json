@@ -1,0 +1,22 @@
+{
+  "spider": "./jar/global.jar;md5;0123456789abcdef0123456789abcdef",
+  "wallpaper": "https://pics.example.com/w.jpg",
+  "sites": [
+    { "key": "t1a", "name": "演示源A", "type": 1, "api": "https://a.example.com/api.php/provide/vod/?ac=list", "searchable": 1, "quickSearch": 1, "filterable": 1 },
+    { "key": "t1b", "name": "演示源B", "type": 1, "api": "./api/cms.php?ac=list", "timeout": 10, "header": { "User-Agent": "StarScreen/0.1" } },
+    { "key": "t0a", "name": "演示XML源", "type": 0, "api": "https://x.example.com/api.php/provide/vod/at/xml/" },
+    { "key": "xpathmac", "name": "规则源演示", "type": 3, "api": "csp_XPathMacFilter", "ext": "./json/duboku.json" },
+    { "key": "appys", "name": "AppYs演示", "type": 3, "api": "csp_AppYsV2", "ext": "https://appys.example.com/api.php/v1.vod###ext-info" },
+    { "key": "alist", "name": "网盘演示", "type": 3, "api": "csp_AList", "ext": "{\"drives\":[{\"name\":\"nas\",\"server\":\"https://nas.example.com\",\"version\":3}]}" },
+    { "key": "douban", "name": "豆瓣", "type": 3, "api": "csp_Douban", "ext": "./json/douban.json" },
+    { "key": "drpy", "name": "drpy演示", "type": 3, "api": "./lib/drpy2.min.js", "ext": "./js/drpy.js" },
+    { "key": "lffam", "name": "lf搜索", "type": 3, "api": "./lib/lf_search3_min.js", "ext": "18+" },
+    { "key": "pysrc", "name": "py演示", "type": 3, "api": "./spiders/py_source.py" },
+    { "key": "hipy4", "name": "hipy演示", "type": 4, "api": "https://hipy.example.com/t4" },
+    { "name": "缺key的站点", "type": 1, "api": "https://broken.example.com/api.php/provide/vod" },
+    { "key": "sitejar", "name": "站点级jar", "type": 3, "api": "csp_Custom", "jar": "./jar/custom.jar;md5;abcdef" }
+  ],
+  "lives": [
+    { "name": "演示直播", "type": 0, "url": "./live/tv.txt", "epg": "https://epg.example.com/?ch={name}&date={date}", "logo": "https://logo.example.com/{name}.png" }
+  ]
+}

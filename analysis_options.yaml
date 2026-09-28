@@ -1,0 +1,29 @@
+# 星映 · 共享静态分析配置（全部包 include 本文件）
+# 架构红线（docs/03 §2）：领域层禁止依赖 Flutter UI 库 —— CI 中由
+# tools/check_architecture 脚本额外校验（扫描 packages/domain 的 import）。
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "apps/**/windows/**"
+    - "apps/**/android/**"
+
+linter:
+  rules:
+    - always_declare_return_types
+    - avoid_dynamic_calls
+    - avoid_print
+    - avoid_empty_else
+    - cancel_subscriptions
+    - directives_ordering
+    - prefer_const_constructors
+    - prefer_final_locals
+    - prefer_single_quotes
+    - throw_in_finally
+    - unawaited_futures
+    - unnecessary_lambdas
+    - unnecessary_string_interpolations

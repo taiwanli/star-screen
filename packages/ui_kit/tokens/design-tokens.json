@@ -1,0 +1,94 @@
+{
+  "$description": "星映三层设计令牌（W3C Design Tokens 草案格式）。结构依据《三端统一设计规范》v1.1 §8：引用层(ref)/系统层(sys)/组件层(comp)；端差异发生在 $extensions.platform 与 tokens.*.css 覆盖文件。暗色为产品默认（docs/07 决策 D1），亮色为等价变体。",
+  "$extensions": {
+    "star.default-theme": "light",
+    "star.ui-style": "liquid-glass+neumorphism",
+    "star.locked": ["color.brand", "color.semantic"] 
+  },
+  "color": {
+    "bg": {
+      "page":   { "$type": "color", "$value": "#0D1015", "$extensions": { "platform": { "desktop": "#0D1015", "mobile": "#0D1015", "tv": "#0D1015" }, "light-theme": "#FFFFFF" } },
+      "surface":{ "$type": "color", "$value": "#171B21", "light-theme": "#F7F8FA" },
+      "raised": { "$type": "color", "$value": "#20262E", "light-theme": "#EFF1F4" },
+      "line":   { "$type": "color", "$value": "#2A3038", "light-theme": "#E6E8EC" },
+      "line-strong": { "$type": "color", "$value": "#3E454F", "light-theme": "#D3D7DD" }
+    },
+    "text": {
+      "primary":   { "$type": "color", "$value": "#F7F8FA", "light-theme": "#15181E" },
+      "secondary": { "$type": "color", "$value": "#CBD0D8", "light-theme": "#3F4650" },
+      "tertiary":  { "$type": "color", "$value": "#9BA3AF", "light-theme": "#6B7280" },
+      "disabled":  { "$type": "color", "$value": "#6E7785", "light-theme": "#9AA1AB" }
+    },
+    "brand": {
+      "500": { "$type": "color", "$value": "#1F6FB4", "$description": "锁死：三端零色差" },
+      "400": { "$type": "color", "$value": "#4B8CCB" },
+      "600": { "$type": "color", "$value": "#175A93" },
+      "300": { "$type": "color", "$value": "#7BABDD" }
+    },
+    "semantic": {
+      "ok":     { "$type": "color", "$value": "#1F8A4C" },
+      "warn":   { "$type": "color", "$value": "#B26A00" },
+      "error":  { "$type": "color", "$value": "#C0322B" },
+      "info":   { "$type": "color", "$value": "#1F6FB4" }
+    }
+  },
+  "font": {
+    "size": {
+      "body":    { "$type": "dimension", "$value": "14px", "$extensions": { "platform": { "desktop": "14px", "mobile": "16sp", "tv": "24px" } } },
+      "title-1": { "$type": "dimension", "$value": "28px", "$extensions": { "platform": { "desktop": "28px", "mobile": "24sp", "tv": "48px" } } },
+      "title-2": { "$type": "dimension", "$value": "22px", "$extensions": { "platform": { "desktop": "22px", "mobile": "20sp", "tv": "36px" } } },
+      "caption": { "$type": "dimension", "$value": "12px", "$extensions": { "platform": { "desktop": "12px", "mobile": "12sp", "tv": "18px" } } }
+    },
+    "weight": {
+      "regular": { "$type": "fontWeight", "$value": 400 },
+      "medium":  { "$type": "fontWeight", "$value": 500 },
+      "bold":    { "$type": "fontWeight", "$value": 700, "$description": "TV 端禁用（仅 400/500）" }
+    }
+  },
+  "size": {
+    "control-height": {
+      "sm": { "$type": "dimension", "$value": "32px", "$extensions": { "platform": { "desktop": "32px", "mobile": "40dp", "tv": "72px" } } },
+      "md": { "$type": "dimension", "$value": "36px", "$extensions": { "platform": { "desktop": "36px", "mobile": "48dp", "tv": "88px" } } },
+      "lg": { "$type": "dimension", "$value": "40px", "$extensions": { "platform": { "desktop": "40px", "mobile": "56dp", "tv": "88px" } } }
+    },
+    "touch-target-min": { "$type": "dimension", "$value": "24px", "$extensions": { "platform": { "desktop": "24px", "mobile": "48dp", "tv": "100px" } } },
+    "card": {
+      "poster":  { "$type": "dimension", "$value": "160x240", "$extensions": { "platform": { "desktop": "160x240", "mobile": "112x168", "tv": "disabled-16:9-only" } } },
+      "landscape": { "$type": "dimension", "$value": "224x126", "$extensions": { "platform": { "desktop": "224x126", "mobile": "168x94", "tv": "480x270" } } },
+      "progress-height": { "$type": "dimension", "$value": "2px", "$extensions": { "platform": { "desktop": "2px", "mobile": "2dp", "tv": "6px" } } }
+    }
+  },
+  "space": {
+    "page-margin": { "$type": "dimension", "$value": "24px", "$extensions": { "platform": { "desktop": "24px", "mobile": "16dp", "tv": "48px" } } },
+    "tv-safe-area": { "$type": "dimension", "$value": "0px", "$extensions": { "platform": { "desktop": "0px", "mobile": "0dp", "tv": "48px" } } }
+  },
+  "radius": {
+    "sm": { "$type": "dimension", "$value": "4px", "$extensions": { "platform": { "tv": "8px" } } },
+    "md": { "$type": "dimension", "$value": "8px", "$extensions": { "platform": { "tv": "12px" } } },
+    "lg": { "$type": "dimension", "$value": "12px", "$extensions": { "platform": { "tv": "18px" } } },
+    "xl": { "$type": "dimension", "$value": "16px", "$extensions": { "platform": { "tv": "24px" } } }
+  },
+  "border": {
+    "width": {
+      "base":  { "$type": "dimension", "$value": "1px", "$extensions": { "platform": { "tv": "3px" } } },
+      "focus": { "$type": "dimension", "$value": "2px", "$extensions": { "platform": { "tv": "3px" } } }
+    }
+  },
+  "elevation": {
+    "1": { "$type": "shadow", "$value": "0 1px 2px rgba(0,0,0,0.06)", "$extensions": { "platform": { "tv": "0 2px 8px rgba(0,0,0,0.30)" } } },
+    "5": { "$type": "shadow", "$value": "0 8px 32px rgba(0,0,0,0.14)", "$extensions": { "platform": { "tv": "0 12px 40px rgba(0,0,0,0.55)" } } }
+  },
+  "motion": {
+    "duration": {
+      "fast": { "$type": "duration", "$value": "120ms", "$extensions": { "platform": { "tv": "180ms" } } },
+      "base": { "$type": "duration", "$value": "200ms", "$extensions": { "platform": { "tv": "300ms" } } },
+      "slow": { "$type": "duration", "$value": "320ms", "$extensions": { "platform": { "tv": "480ms" } } }
+    },
+    "ease-standard": { "$type": "cubicBezier", "$value": [0.2, 0, 0, 1] }
+  },
+  "star.progress": {
+    "finished-threshold": { "$type": "number", "$value": 0.9, "$description": "≥90% 视为已看完，移出继续观看（三端锁死）" },
+    "min-record-threshold": { "$type": "number", "$value": 0.05, "$description": "<5% 不生成续播记录" },
+    "sync-tolerance-sec": { "$type": "number", "$value": 5, "$description": "跨端续播误差上限" }
+  }
+}

@@ -1,0 +1,632 @@
+<!-- AI生成 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>星映 UI 重构可视化报告 · 液态玻璃 × 同类标杆</title>
+<style>
+  :root {
+    --page: #E8EEF5;
+    --surface: #F4F7FB;
+    --raised: #FFFFFF;
+    --ink: #152033;
+    --ink2: #3F4A5C;
+    --ink3: #6B7789;
+    --ink4: #8B96A8;
+    --brand: #2F7FD1;
+    --brandHi: #5AA0E8;
+    --brandSoft: rgba(47,127,209,0.16);
+    --glass: rgba(255,255,255,0.62);
+    --glassStrong: rgba(255,255,255,0.72);
+    --neuDark: #A8B7C8;
+    --ok: #1F8A4C;
+    --warn: #B26A00;
+    --bad: #C0322B;
+    --r-lg: 20px;
+    --r-xl: 28px;
+    --r-md: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font: 15px/1.65 -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--page);
+    color: var(--ink);
+    padding: 28px 18px 80px;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; }
+  h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+  .sub { color: var(--ink3); margin: 8px 0 28px; font-size: 14px; }
+  h2 {
+    font-size: 20px; font-weight: 650; margin: 40px 0 14px;
+    padding-left: 12px; border-left: 4px solid var(--brand);
+  }
+  h3 { font-size: 15px; font-weight: 600; margin: 18px 0 8px; color: var(--ink2); }
+  .card {
+    background: var(--glassStrong);
+    border: 1px solid rgba(255,255,255,0.75);
+    border-radius: var(--r-lg);
+    padding: 18px 20px;
+    box-shadow: 6px 6px 18px rgba(163,177,198,0.45), -4px -4px 12px rgba(255,255,255,0.85);
+  }
+  .grid { display: grid; gap: 16px; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g4 { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 900px) {
+    .g2, .g3, .g4 { grid-template-columns: 1fr; }
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid rgba(21,32,51,0.08); vertical-align: top; }
+  th { color: var(--ink3); font-weight: 600; font-size: 12px; }
+  .tag {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 11px; background: var(--brandSoft); color: var(--brand); font-weight: 600;
+  }
+  .tag.ok { background: rgba(31,138,76,0.12); color: var(--ok); }
+  .tag.warn { background: rgba(178,106,0,0.12); color: var(--warn); }
+  .tag.bad { background: rgba(192,50,43,0.12); color: var(--bad); }
+  .muted { color: var(--ink3); font-size: 12px; }
+  .swatch { width: 28px; height: 28px; border-radius: 8px; display: inline-block; vertical-align: middle; border: 1px solid rgba(0,0,0,0.06); }
+  .sw-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .sw-item { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; color: var(--ink3); }
+
+  /* ── mock frame ── */
+  .mock {
+    background: var(--surface);
+    border-radius: var(--r-xl);
+    border: 1px solid rgba(255,255,255,0.8);
+    box-shadow: 8px 8px 22px rgba(163,177,198,0.4), -6px -6px 16px rgba(255,255,255,0.9);
+    overflow: hidden;
+  }
+  .mock-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px; background: var(--glass);
+    border-bottom: 1px solid rgba(21,32,51,0.06);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--neuDark); }
+  .mock-title { font-size: 12px; color: var(--ink3); margin-left: 6px; }
+  .mock-body { padding: 16px; }
+  .win { min-height: 320px; }
+
+  /* app chrome */
+  .app { display: flex; gap: 12px; min-height: 380px; }
+  .side {
+    width: 148px; border-radius: var(--r-lg); padding: 12px 10px;
+    background: var(--glass); border: 1px solid rgba(255,255,255,0.7);
+  }
+  .nav {
+    display: flex; align-items: center; gap: 8px; padding: 10px 12px;
+    border-radius: 12px; margin-bottom: 6px; font-size: 13px; color: var(--ink2);
+  }
+  .nav.on {
+    background: var(--brandSoft); color: var(--brand); font-weight: 600;
+    box-shadow: inset 0 0 0 1px rgba(47,127,209,0.25);
+  }
+  .main { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+  .topbar {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--glass); border-radius: var(--r-lg); padding: 10px 14px;
+    border: 1px solid rgba(255,255,255,0.7);
+  }
+  .search {
+    flex: 1; background: var(--raised); border-radius: 999px;
+    padding: 8px 16px; color: var(--ink4); font-size: 13px;
+    box-shadow: inset 2px 2px 6px rgba(163,177,198,0.35);
+  }
+  .pill {
+    padding: 7px 14px; border-radius: 999px; font-size: 12px;
+    background: var(--raised); color: var(--ink2);
+    box-shadow: 3px 3px 8px rgba(163,177,198,0.35), -2px -2px 6px rgba(255,255,255,0.9);
+  }
+  .pill.on { background: var(--brand); color: #fff; box-shadow: none; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* poster */
+  .posters { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  @media (max-width: 800px) { .posters { grid-template-columns: repeat(3, 1fr); } }
+  .poster {
+    aspect-ratio: 2/3; border-radius: 14px; position: relative; overflow: hidden;
+    background: linear-gradient(145deg, #dce8f5, #b8c9dc);
+    border: 1px solid rgba(255,255,255,0.7);
+    box-shadow: 4px 4px 12px rgba(163,177,198,0.4);
+  }
+  .poster.alt1 { background: linear-gradient(145deg, #e8dff5, #c4b5e0); }
+  .poster.alt2 { background: linear-gradient(145deg, #d5f0e4, #a8d4c0); }
+  .poster.alt3 { background: linear-gradient(145deg, #f5e8d8, #e0c4a8); }
+  .poster .t {
+    position: absolute; inset: auto 8px 8px; color: #fff; font-size: 11px; font-weight: 600;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.35);
+  }
+  .poster .badge {
+    position: absolute; top: 8px; right: 8px; font-size: 10px; padding: 2px 7px;
+    border-radius: 999px; background: rgba(0,0,0,0.45); color: #fff;
+  }
+  .poster .prog {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(255,255,255,0.35);
+  }
+  .poster .prog i { display: block; height: 100%; width: 42%; background: var(--brandHi); }
+
+  /* player mock */
+  .player {
+    aspect-ratio: 16/9; border-radius: var(--r-xl); position: relative; overflow: hidden;
+    background: linear-gradient(160deg, #1a2230 0%, #2a3548 50%, #1e2838 100%);
+  }
+  .osd-top {
+    position: absolute; top: 12px; left: 12px; right: 12px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .glass-pill {
+    background: rgba(255,255,255,0.78); border: 1px solid rgba(255,255,255,0.85);
+    border-radius: 18px; padding: 8px 12px; color: var(--ink); font-size: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+    backdrop-filter: blur(12px);
+  }
+  .osd-bottom {
+    position: absolute; left: 12px; right: 12px; bottom: 12px;
+  }
+  .seek-wrap {
+    background: rgba(255,255,255,0.78); border: 1px solid rgba(255,255,255,0.85);
+    border-radius: 22px; padding: 10px 12px 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+    backdrop-filter: blur(12px);
+  }
+  .seek {
+    height: 4px; border-radius: 2px; background: rgba(21,32,51,0.12); position: relative; margin: 4px 6px 10px;
+  }
+  .seek .buf { position: absolute; left: 0; top: 0; bottom: 0; width: 55%; background: var(--brandSoft); border-radius: 2px; }
+  .seek .pos { position: absolute; left: 0; top: 0; bottom: 0; width: 32%; background: var(--brand); border-radius: 2px; }
+  .seek .thumb {
+    position: absolute; left: 32%; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px;
+    border-radius: 50%; background: #fff; box-shadow: 0 2px 8px rgba(47,127,209,0.4);
+  }
+  .ctrl-row { display: flex; align-items: center; gap: 8px; color: var(--ink2); font-size: 12px; }
+  .cbtn {
+    width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center;
+    background: transparent; color: var(--ink); font-size: 16px;
+  }
+  .cbtn.primary { background: var(--brand); color: #fff; border-radius: 14px; width: 42px; height: 42px; font-size: 18px; }
+  .chip {
+    padding: 5px 11px; border-radius: 999px; background: var(--surface); color: var(--ink2); font-size: 11px;
+  }
+
+  .vs {
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: stretch;
+  }
+  .vs .arrow { align-self: center; font-size: 22px; color: var(--brand); font-weight: 700; }
+  .before { opacity: 0.85; }
+  .before .mock-body { filter: saturate(0.85); }
+  .note {
+    margin-top: 10px; padding: 10px 12px; border-radius: 12px;
+    background: var(--brandSoft); color: var(--ink2); font-size: 12px;
+  }
+  .kpi { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0; }
+  .kpi .item {
+    flex: 1; min-width: 140px; background: var(--raised); border-radius: var(--r-md);
+    padding: 14px 16px; box-shadow: 3px 3px 10px rgba(163,177,198,0.35);
+  }
+  .kpi .n { font-size: 22px; font-weight: 700; color: var(--brand); }
+  .kpi .l { font-size: 12px; color: var(--ink3); margin-top: 2px; }
+  ul.plain { padding-left: 18px; color: var(--ink2); font-size: 13px; }
+  ul.plain li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<p data-aigc-mark="1" style="margin:0 0 8px;font-size:10px;line-height:1.3;color:#6b6560;font-weight:400;">AI生成</p>
+
+<div class="wrap">
+  <h1>星映 UI 重构 · 可视化报告</h1>
+  <p class="sub">
+    主风格锁定：<strong>液态玻璃 + 新拟态 + 浅色</strong>（docs/15）· 品牌蓝 <code>#2F7FD1</code> 不变 ·
+    布局与交互对标 <strong>Infuse / Bilibili 桌面 / Netflix / IINA</strong> · 仅供评审，未直接改代码
+  </p>
+
+  <div class="kpi">
+    <div class="item"><div class="n">5</div><div class="l">核心界面重绘</div></div>
+    <div class="item"><div class="n">4</div><div class="l">标杆 App 对照</div></div>
+    <div class="item"><div class="n">12</div><div class="l">交互升级点</div></div>
+    <div class="item"><div class="n">0</div><div class="l">风格体系变更</div></div>
+  </div>
+
+  <!-- ═══════════ 1 对标 ═══════════ -->
+  <h2>1 · 同类软件借鉴点</h2>
+  <div class="card">
+    <table>
+      <tr><th>产品</th><th>值得抄</th><th>落到星映</th></tr>
+      <tr>
+        <td><span class="tag">Infuse</span></td>
+        <td>大图海报墙、沉浸详情、玻璃悬浮播放控件、海报进度条</td>
+        <td>首页大卡推荐 + 详情沉浸头图 + 播放 OSD 胶囊</td>
+      </tr>
+      <tr>
+        <td><span class="tag">Bilibili 桌面</span></td>
+        <td>顶栏搜索胶囊、分类 Chip、卡片圆角统一、悬停轻抬升</td>
+        <td>顶栏玻璃条 + 分类 Chip 组 + 卡片 hover 阴影加深</td>
+      </tr>
+      <tr>
+        <td><span class="tag">Netflix / 迪士尼+</span></td>
+        <td>横滑片单行（一行一题材）、大字号标题、弱化侧栏</td>
+        <td>首页「继续观看 / 为你推荐 / 分类行」结构</td>
+      </tr>
+      <tr>
+        <td><span class="tag">IINA / PotPlayer</span></td>
+        <td>真全屏、单进度条、快捷键、自动隐藏 OSD、设置收进菜单</td>
+        <td>播放页 v2/v3（已落地）+ 设置面板</td>
+      </tr>
+    </table>
+    <div class="note">原则：<strong>布局学 Infuse/Netflix，控件学 IINA，皮肤仍是星映液态玻璃。</strong>不引入深色影院皮肤，避免与浅色壳割裂。</div>
+  </div>
+
+  <!-- ═══════════ 2 设计系统 ═══════════ -->
+  <h2>2 · 设计系统（锁死，不改）</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3>色彩令牌</h3>
+      <div class="sw-row" style="margin:12px 0">
+        <div class="sw-item"><div class="swatch" style="background:#E8EEF5"></div>page</div>
+        <div class="sw-item"><div class="swatch" style="background:#F4F7FB"></div>surface</div>
+        <div class="sw-item"><div class="swatch" style="background:#FFFFFF"></div>raised</div>
+        <div class="sw-item"><div class="swatch" style="background:#152033"></div>ink</div>
+        <div class="sw-item"><div class="swatch" style="background:#2F7FD1"></div>brand</div>
+        <div class="sw-item"><div class="swatch" style="background:#A8B7C8"></div>neuDark</div>
+      </div>
+      <ul class="plain">
+        <li>玻璃：白 62%–72% + 1px 高光描边 + blur 18–28</li>
+        <li>新拟态：亮阴影 <code>#FFF</code> / 暗阴影 <code>#A8B7C8</code></li>
+        <li>圆角：卡片 14–20 · 浮层 28 · 胶囊 999</li>
+        <li>品牌蓝只用于：主按钮、进度、选中态、链接</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>文字层级</h3>
+      <table>
+        <tr><th>用途</th><th>字号</th><th>字重</th><th>颜色</th></tr>
+        <tr><td>页标题 / 详情名</td><td>22–28</td><td>700</td><td>ink</td></tr>
+        <tr><td>区块标题</td><td>16–18</td><td>600</td><td>ink</td></tr>
+        <tr><td>卡片标题</td><td>13–14</td><td>500</td><td>ink</td></tr>
+        <tr><td>次要信息</td><td>12</td><td>400</td><td>ink3</td></tr>
+        <tr><td>元数据 / 角标</td><td>10–11</td><td>600</td><td>ink3 / brand</td></tr>
+      </table>
+      <div class="note">播放器 OSD 例外：玻璃胶囊上用 ink 字色（浅玻璃），与全站一致，不为对比度改成霓虹黑条。</div>
+    </div>
+  </div>
+
+  <!-- ═══════════ 3 首页 ═══════════ -->
+  <h2>3 · 首页（对标 Infuse 片墙 + Netflix 行）</h2>
+  <div class="vs">
+    <div class="mock before">
+      <div class="mock-bar"><span class="dot"></span><span class="dot"></span><span class="mock-title">现状 · 均质六列小卡</span></div>
+      <div class="mock-body">
+        <div class="app">
+          <div class="side">
+            <div class="nav on">⌂ 首页</div>
+            <div class="nav">▦ 分类</div>
+            <div class="nav">⌕ 搜索</div>
+            <div class="nav">♥ 我的</div>
+          </div>
+          <div class="main">
+            <div class="topbar"><div class="search">搜索影片、剧集…</div></div>
+            <div class="posters">
+              <div class="poster"><div class="t">片名</div></div>
+              <div class="poster alt1"><div class="t">片名</div></div>
+              <div class="poster alt2"><div class="t">片名</div></div>
+              <div class="poster alt3"><div class="t">片名</div></div>
+              <div class="poster"><div class="t">片名</div></div>
+              <div class="poster alt1"><div class="t">片名</div></div>
+            </div>
+            <div class="posters">
+              <div class="poster alt2"><div class="t">片名</div></div>
+              <div class="poster alt3"><div class="t">片名</div></div>
+              <div class="poster"><div class="t">片名</div></div>
+              <div class="poster alt1"><div class="t">片名</div></div>
+              <div class="poster alt2"><div class="t">片名</div></div>
+              <div class="poster alt3"><div class="t">片名</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="mock">
+      <div class="mock-bar"><span class="dot"></span><span class="dot"></span><span class="mock-title">提案 · 大卡推荐 + 行式片单</span></div>
+      <div class="mock-body">
+        <div class="app">
+          <div class="side">
+            <div class="nav on">⌂ 首页</div>
+            <div class="nav">▦ 分类</div>
+            <div class="nav">⌕ 搜索</div>
+            <div class="nav">▶ 直播</div>
+            <div class="nav">♥ 我的</div>
+          </div>
+          <div class="main">
+            <div class="topbar">
+              <div class="search">搜索影片、剧集、演员…</div>
+              <div class="pill on">Sony</div>
+            </div>
+            <!-- hero -->
+            <div style="height:110px;border-radius:16px;background:linear-gradient(120deg,#2F7FD1,#5AA0E8);display:flex;align-items:flex-end;padding:14px 16px;color:#fff">
+              <div>
+                <div style="font-size:11px;opacity:.85">继续观看 · 第 3 集</div>
+                <div style="font-size:18px;font-weight:700">再见 1987</div>
+                <div style="font-size:11px;opacity:.8">14:47 / 58:10 · 已看 25%</div>
+              </div>
+            </div>
+            <div style="font-size:12px;font-weight:600;color:var(--ink2);margin-top:4px">为你推荐</div>
+            <div class="posters">
+              <div class="poster"><div class="badge">4K</div><div class="t">再见 1987</div><div class="prog"><i></i></div></div>
+              <div class="poster alt1"><div class="t">大哥小助理</div></div>
+              <div class="poster alt2"><div class="badge">新</div><div class="t">特技车手</div></div>
+              <div class="poster alt3"><div class="t">为了你的母亲</div></div>
+              <div class="poster"><div class="t">柯蒂斯总统</div></div>
+              <div class="poster alt1"><div class="t">妖王养成</div></div>
+            </div>
+            <div class="note" style="margin:8px 0 0">下方再滚：「最近更新」「电影」「剧集」等横滑行（每行标题 + 更多）</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>首页改动清单</h3>
+    <table>
+      <tr><th>点</th><th>做法</th><th>对标</th></tr>
+      <tr><td>Hero 续播条</td><td>首屏顶部品牌蓝渐变大卡，点击续播</td><td>Netflix / Infuse</td></tr>
+      <tr><td>行式片单</td><td>替代均质网格；每行 5–7 卡横滑，标题+「更多」</td><td>Netflix</td></tr>
+      <tr><td>海报信息</td><td>左下标题、右上角标（4K/更新）、底部进度条</td><td>Infuse</td></tr>
+      <tr><td>Hover</td><td>卡片轻抬升（阴影加深 + 轻微 scale 1.02）</td><td>B 站</td></tr>
+      <tr><td>侧栏</td><td>新拟态胶囊选中态（已有，保持）</td><td>星映</td></tr>
+    </table>
+  </div>
+
+  <!-- ═══════════ 4 分类 ═══════════ -->
+  <h2>4 · 分类 / 列表页</h2>
+  <div class="grid g2">
+    <div class="mock">
+      <div class="mock-bar"><span class="mock-title">提案 · 筛选玻璃条 + 结果计数</span></div>
+      <div class="mock-body">
+        <div class="row" style="margin-bottom:12px">
+          <div class="pill on">全部</div>
+          <div class="pill">电影</div>
+          <div class="pill">剧集</div>
+          <div class="pill">综艺</div>
+          <div class="pill">4K 专区</div>
+          <div class="pill">年份 ⌄</div>
+          <div class="pill">地区 ⌄</div>
+        </div>
+        <div class="muted" style="margin-bottom:8px">共 1,284 部 · 按更新排序</div>
+        <div class="posters" style="grid-template-columns:repeat(5,1fr)">
+          <div class="poster"><div class="t">片 A</div></div>
+          <div class="poster alt1"><div class="t">片 B</div></div>
+          <div class="poster alt2"><div class="t">片 C</div></div>
+          <div class="poster alt3"><div class="t">片 D</div></div>
+          <div class="poster"><div class="t">片 E</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>分类页要点</h3>
+      <ul class="plain">
+        <li><strong>筛选 Chip 条</strong>：玻璃底横排，选中品牌蓝实心（现状下拉框+单按钮太干）</li>
+        <li><strong>结果计数</strong> + 排序入口（更新 / 评分 / 年份）</li>
+        <li><strong>源切换器</strong> 收进 Chip 右侧「Sony ⌄」，不占两行</li>
+        <li>无限滚动 + 回到顶部胶囊（玻璃）</li>
+        <li>空态：新拟态插画区 +「去导入源」主按钮</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══════════ 5 详情 ═══════════ -->
+  <h2>5 · 详情页（对标 Infuse 沉浸式）</h2>
+  <div class="mock">
+    <div class="mock-bar"><span class="mock-title">提案 · 沉浸头图 + 选集玻璃面板</span></div>
+    <div class="mock-body" style="padding:0">
+      <div style="height:180px;background:linear-gradient(120deg,#2a3548,#2F7FD1);position:relative">
+        <div style="position:absolute;left:16px;right:16px;bottom:16px;display:flex;gap:16px;align-items:flex-end">
+          <div style="width:100px;height:150px;border-radius:12px;background:linear-gradient(145deg,#dce8f5,#b8c9dc);border:1px solid rgba(255,255,255,0.5);box-shadow:0 12px 28px rgba(0,0,0,0.25)"></div>
+          <div style="color:#fff;flex:1">
+            <div style="font-size:22px;font-weight:700">再见 1987</div>
+            <div style="font-size:12px;opacity:.85;margin-top:4px">2026 · 剧情 · 大陆 · 全 10 集</div>
+            <div class="row" style="margin-top:10px">
+              <div class="pill on">▶ 立即播放</div>
+              <div class="pill">＋ 收藏</div>
+              <div class="pill">⇧ 分享</div>
+              <div class="pill">⋯ 换源</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:16px;display:grid;grid-template-columns:1.4fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:8px">简介</div>
+          <div class="muted" style="line-height:1.7">一段关于年代与家庭的故事……（折叠「展开」）</div>
+          <div class="row" style="margin-top:12px">
+            <div class="chip">导演 · 张三</div>
+            <div class="chip">主演 · 李四</div>
+            <div class="chip">评分 8.6</div>
+          </div>
+          <div style="font-size:12px;font-weight:600;color:var(--ink2);margin:14px 0 8px">选集 · 线路 A</div>
+          <div class="row">
+            <div class="pill on">1</div><div class="pill">2</div><div class="pill">3</div>
+            <div class="pill">4</div><div class="pill">5</div><div class="pill">6</div>
+            <div class="pill">7</div><div class="pill">8</div><div class="pill">9</div>
+            <div class="pill">10</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:8px">其他源 / 相似</div>
+          <div class="card" style="padding:10px;margin-bottom:8px">源 A · 正常 · 820ms</div>
+          <div class="card" style="padding:10px;margin-bottom:8px">源 B · 偏慢 · 2.1s</div>
+          <div class="card" style="padding:10px">相似片 · 海报缩略…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>详情页要点</h3>
+    <table>
+      <tr><th>模块</th><th>做法</th></tr>
+      <tr><td>头图</td><td>模糊海报铺底 + 清晰小海报 + 主操作胶囊（播放品牌蓝实心）</td></tr>
+      <tr><td>选集</td><td>数字胶囊网格，当前集品牌蓝；支持键盘 1–9</td></tr>
+      <tr><td>线路</td><td>Chip 切换，行内显示健康度色点</td></tr>
+      <tr><td>换源</td><td>右侧「其他源」列表按健康分排序，一键跳转</td></tr>
+      <tr><td>续播</td><td>已看进度提示「从 14:47 继续」</td></tr>
+    </table>
+  </div>
+
+  <!-- ═══════════ 6 播放器 ═══════════ -->
+  <h2>6 · 播放器（已实现 v3 方向，示意确认）</h2>
+  <div class="player">
+    <div class="osd-top">
+      <div class="glass-pill">←　再见 1987 · 第 3 集</div>
+      <div class="glass-pill">倍速 1.25x · 1080P</div>
+    </div>
+    <div class="osd-bottom">
+      <div class="seek-wrap">
+        <div class="seek"><div class="buf"></div><div class="pos"></div><div class="thumb"></div></div>
+        <div class="ctrl-row">
+          <div class="cbtn primary">▶</div>
+          <div class="cbtn">⏮</div>
+          <div class="cbtn">⏭</div>
+          <div class="cbtn">🔊</div>
+          <div style="width:56px;height:3px;border-radius:2px;background:rgba(21,32,51,0.12);position:relative">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:70%;background:var(--brand);border-radius:2px"></div>
+          </div>
+          <span>14:47 / 58:10</span>
+          <span class="chip">跳过片头</span>
+          <span style="flex:1"></span>
+          <div class="cbtn">⚙</div>
+          <div class="cbtn">⤢</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>播放器与主风格统一</h3>
+    <ul class="plain">
+      <li>OSD = <strong>白玻璃胶囊</strong>（与顶栏/对话框同一套 glass + 高光描边）</li>
+      <li>进度 = 品牌蓝 + 新拟态拇指，单条</li>
+      <li>主键播放 = 品牌蓝圆角钮，与「立即播放」同形</li>
+      <li>3s 隐藏 · F/双击真全屏 · 空格/方向键/M</li>
+      <li>设置面板用底部玻璃浮层（倍速/音轨/字幕/投屏）</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════ 7 源管理 ═══════════ -->
+  <h2>7 · 源管理（操作密度提升）</h2>
+  <div class="mock">
+    <div class="mock-bar"><span class="mock-title">提案 · 分组树 + 健康度 + 批量</span></div>
+    <div class="mock-body">
+      <div class="row" style="margin-bottom:12px">
+        <div class="pill on">全部 50</div>
+        <div class="pill">启用 42</div>
+        <div class="pill">失效 3</div>
+        <div class="pill">不支持 5</div>
+        <div class="pill">＋ 导入</div>
+        <div class="pill">⟳ 测活</div>
+        <div class="pill">☑ 批量</div>
+      </div>
+      <div class="grid g2" style="grid-template-columns:180px 1fr">
+        <div class="side" style="width:auto">
+          <div class="nav on">全部源</div>
+          <div class="nav">星映·50 源</div>
+          <div class="nav">测试包</div>
+          <div class="nav">本地收藏</div>
+        </div>
+        <div>
+          <div class="card" style="padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--ok)"></span>
+            <strong style="font-size:13px">索尼</strong>
+            <span class="tag">CMS</span>
+            <span class="muted">StarRule 三端 · 820ms</span>
+            <span style="flex:1"></span>
+            <div class="pill on" style="padding:4px 12px">开</div>
+          </div>
+          <div class="card" style="padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--warn)"></span>
+            <strong style="font-size:13px">某源</strong>
+            <span class="tag warn">降权</span>
+            <span class="muted">连续失败 3 次</span>
+            <span style="flex:1"></span>
+            <div class="pill" style="padding:4px 12px">恢复</div>
+          </div>
+          <div class="card" style="padding:12px;display:flex;align-items:center;gap:10px">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--bad)"></span>
+            <strong style="font-size:13px">jar 源</strong>
+            <span class="tag bad">桌面不可用</span>
+            <span class="muted">建议用 StarRule 重写</span>
+            <span style="flex:1"></span>
+            <div class="pill" style="padding:4px 12px">开</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ 8 交互 ═══════════ -->
+  <h2>8 · 交互升级总表</h2>
+  <div class="card">
+    <table>
+      <tr><th>#</th><th>交互</th><th>规范</th><th>优先级</th></tr>
+      <tr><td>1</td><td>卡片悬停</td><td>scale 1.02 + 阴影加深 150ms</td><td><span class="tag">P0</span></td></tr>
+      <tr><td>2</td><td>选集键盘</td><td>数字键 1–9 跳集</td><td><span class="tag">P0</span></td></tr>
+      <tr><td>3</td><td>双击播放区</td><td>真全屏切换</td><td><span class="tag ok">已做</span></td></tr>
+      <tr><td>4</td><td>进度拖拽</td><td>松手 seek，拖动显示时间气泡</td><td><span class="tag">P0</span></td></tr>
+      <tr><td>5</td><td>自动播下一集</td><td>片尾 90% 弹玻璃横幅 10s</td><td><span class="tag">P1</span></td></tr>
+      <tr><td>6</td><td>记住播放位置</td><td>≥5% 记录，重进「继续观看」</td><td><span class="tag">P1</span></td></tr>
+      <tr><td>7</td><td>换源不丢进度</td><td>切线路保留集数与时长比例</td><td><span class="tag">P1</span></td></tr>
+      <tr><td>8</td><td>源健康熔断</td><td>失败阶梯停用 + 一键恢复</td><td><span class="tag ok">已做</span></td></tr>
+      <tr><td>9</td><td>文件选择导入</td><td>系统对话框选文件/文件夹</td><td><span class="tag ok">已做</span></td></tr>
+      <tr><td>10</td><td>全局搜索</td><td>顶栏胶囊，结果页按片聚合多源</td><td><span class="tag">P1</span></td></tr>
+      <tr><td>11</td><td>海报失败</td><td>玻璃占位 + 点击重试</td><td><span class="tag ok">已做</span></td></tr>
+      <tr><td>12</td><td>焦点 TV</td><td>遥控器 5 向 + 焦点放大 3%</td><td><span class="tag warn">P2</span></td></tr>
+    </table>
+  </div>
+
+  <!-- ═══════════ 9 路线 ═══════════ -->
+  <h2>9 · 实施建议（保持主风格不变）</h2>
+  <div class="grid g3">
+    <div class="card">
+      <h3><span class="tag">P0</span> 本周可做</h3>
+      <ul class="plain">
+        <li>首页：Hero 续播 + 行式片单</li>
+        <li>分类：筛选 Chip 条</li>
+        <li>播放：进度时间气泡</li>
+        <li>卡片 Hover 微交互</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><span class="tag warn">P1</span> 下迭代</h3>
+      <ul class="plain">
+        <li>详情沉浸头图重排</li>
+        <li>换源保进度</li>
+        <li>全局搜索结果聚合</li>
+        <li>继续观看行</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><span class="tag bad">P2</span> 后续</h3>
+      <ul class="plain">
+        <li>TV 焦点与放大</li>
+        <li>海报磁盘缓存</li>
+        <li>个性化排序</li>
+        <li>皮肤微调（视频上玻璃 tint）</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:24px">
+    <h3>评审问题（可直接回复）</h3>
+    <ul class="plain">
+      <li>首页改成「大卡 Hero + 横滑行」是否接受？（放弃现在的均质六列）</li>
+      <li>详情页头图要不要做「模糊铺底」？（更像 Infuse，成本中）</li>
+      <li>播放器玻璃胶囊在暗色片源上是否够读？（可选略加深 tint）</li>
+      <li>P0 四项是否按此稿落地？</li>
+    </ul>
+  </div>
+
+  <p class="muted" style="margin-top:28px;text-align:center">
+    星映 UI 重构可视化报告 · 液态玻璃/新拟态锁死 · 2026-09-28
+  </p>
+</div>
+</body>
+</html>

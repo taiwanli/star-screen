@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="5.1">
+  <list page="1" pagecount="8018" pagesize="20" recordcount="160358">
+    <video>
+      <last>2026-09-26 11:16:36</last>
+      <id>163403</id>
+      <tid>38</tid>
+      <name><![CDATA[乌鸦俱乐部]]></name>
+      <type>剧情</type>
+      <dt>dplayer</dt>
+      <note>更新至第2集</note>
+      <pic>https://img.example.com/wuya.jpg</pic>
+      <actor><![CDATA[甲,乙]]></actor>
+      <director><![CDATA[某某]]></director>
+      <des><![CDATA[简介内容……]]></des>
+      <dl>
+        <dd flag="bfzym3u8"><![CDATA[第1集$https://cdn.example.com/v/ep1/index.m3u8#第2集$https://cdn.example.com/v/ep2/index.m3u8]]></dd>
+      </dl>
+    </video>
+    <video>
+      <last>2026-09-26 10:35:20</last>
+      <id>134471</id>
+      <tid>29</tid>
+      <name><![CDATA[光阴之外]]></name>
+      <type>剧情</type>
+      <note>更新至41集</note>
+      <dl>
+        <dd flag="snm3u8"><![CDATA[第01集$https://cdn.example.com/x/01.m3u8]]></dd>
+      </dl>
+    </video>
+  </list>
+  <class>
+    <ty id="6">子类1</ty>
+    <ty id="38">剧情</ty>
+  </class>
+</rss>

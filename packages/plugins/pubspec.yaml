@@ -1,0 +1,15 @@
+name: star_plugins
+description: >-
+  源插件基础设施：JS 沙箱限额常量（QuickJS）、drpy 函数契约接口与
+  TVBox 配置导入器接口。实现见里程碑 M3（docs/05 §6.2）。
+version: 0.1.0-dev.1
+publish_to: none
+environment:
+  sdk: ^3.13.0
+resolution: workspace
+dependencies:
+  html: ^0.15.6
+  star_domain:
+    path: ../domain
+dev_dependencies:
+  test: ^1.25.0

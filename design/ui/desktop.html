@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>星映 · Windows 桌面端 UI 设计稿</title>
+<style>
+/* ============ 桌面端令牌（依据《三端统一设计规范》v1.1 · 暗色主题映射） ============ */
+:root{
+  --bg-page:#0D1015; --bg-surface:#171B21; --bg-hi:#20262E;
+  --line:#2A3038; --line-strong:#3E454F;
+  --ink:#F7F8FA; --ink-2:#CBD0D8; --ink-3:#9BA3AF; --ink-4:#6E7785;
+  --brand:#1F6FB4; --brand-hi:#4B8CCB; --brand-lo:#175A93;
+  --brand-soft:rgba(31,111,180,.18); --focus:#7BABDD;
+  --ok:#1F8A4C; --warn:#B26A00; --bad:#C0322B;
+  --r-sm:6px; --r-md:8px; --r-lg:12px; --r-xl:16px;
+  --fs-body:14px; --fs-b2:13px; --fs-cap:12px; --fs-t3:18px; --fs-t2:22px; --fs-t1:28px;
+  --sw:1.5px;
+  --dur:200ms; --ease:cubic-bezier(.2,0,0,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#06080B;color:var(--ink);font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:var(--fs-body);line-height:1.6;padding:44px 24px 80px}
+.ic{stroke:currentColor;fill:none;stroke-width:var(--sw);stroke-linecap:round;stroke-linejoin:round;flex:none}
+svg.ic{width:20px;height:20px}
+.board{max-width:1440px;margin:0 auto}
+.bhead{margin-bottom:34px}
+.bhead .eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:8px}
+.bhead h1{font-size:28px;font-weight:650;letter-spacing:-.01em}
+.bhead .lede{color:var(--ink-2);max-width:76ch;margin-top:10px}
+.spec-strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.spec-strip span{font-size:12px;color:var(--ink-3);border:1px solid var(--line);border-radius:20px;padding:3px 12px}
+.spec-strip b{color:var(--ink-2);font-weight:600}
+.frame-label{display:flex;align-items:baseline;gap:12px;margin:40px 0 12px}
+.frame-label .no{font-family:Consolas,monospace;font-size:12px;color:var(--brand-hi);font-weight:600}
+.frame-label h2{font-size:18px;font-weight:650}
+.frame-label .tags{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.frame-label .tags span{font-size:11px;color:var(--ink-4);border:1px solid var(--line);border-radius:4px;padding:2px 8px}
+.note{font-size:12.5px;color:var(--ink-4);margin-top:10px;max-width:100ch}
+.note b{color:var(--ink-2)}
+/* ============ 桌面窗口壳 ============ */
+.win{width:1360px;background:var(--bg-page);border:1px solid var(--line-strong);border-radius:var(--r-xl);overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.14)}
+.topbar{height:56px;display:flex;align-items:center;gap:16px;padding:0 24px;border-bottom:1px solid var(--line);background:var(--bg-surface)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:650;font-size:16px}
+.logo .mark{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--brand-hi),var(--brand-lo));display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700}
+.qbox{width:420px;height:36px;background:var(--bg-page);border:1px solid var(--line);border-radius:var(--r-md);display:flex;align-items:center;gap:10px;padding:0 12px;color:var(--ink-4);font-size:13px}
+.qbox .kbd{margin-left:auto;font-family:Consolas,monospace;font-size:11px;border:1px solid var(--line);border-radius:4px;padding:1px 6px}
+.ticons{margin-left:auto;display:flex;align-items:center;gap:6px}
+.ticon{width:36px;height:36px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:var(--ink-3)}
+.ticon.hov{background:var(--bg-hi);color:var(--ink)}
+.ticon.focus{outline:2px solid var(--brand-hi);outline-offset:1px;color:var(--ink)}
+.body{display:flex;min-height:640px}
+.nav{width:240px;background:var(--bg-surface);border-right:1px solid var(--line);padding:16px 12px;display:flex;flex-direction:column;gap:2px}
+.nav .grp{font-size:11.5px;letter-spacing:.1em;color:var(--ink-4);padding:10px 12px 6px}
+.nitem{display:flex;align-items:center;gap:12px;height:40px;padding:0 12px;border-radius:var(--r-md);color:var(--ink-2);font-weight:500}
+.nitem.hov{background:var(--bg-hi);color:var(--ink)}
+.nitem.act{background:var(--brand-soft);color:var(--brand-hi);box-shadow:inset 3px 0 0 var(--brand)}
+.nav .add{margin-top:auto;height:40px;border:1px dashed var(--line-strong);border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;gap:8px;color:var(--ink-3);font-size:13px}
+.content{flex:1;padding:24px 24px 32px;min-width:0}
+.pgh{display:flex;align-items:baseline;gap:12px;margin-bottom:16px}
+.pgh h3{font-size:22px;font-weight:650}
+.pgh .sub{color:var(--ink-3);font-size:13px}
+/* ============ 内容卡片（规范 6.1） ============ */
+.rail-h{display:flex;align-items:baseline;gap:10px;margin:22px 0 12px}
+.rail-h h4{font-size:18px;font-weight:650}
+.rail-h .more{margin-left:auto;font-size:13px;color:var(--ink-3)}
+.rail{display:flex;gap:16px;overflow:hidden}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+.pcard{position:relative}
+.thumb{aspect-ratio:2/3;border-radius:var(--r-md);position:relative;overflow:hidden}
+.lthumb{aspect-ratio:16/9;border-radius:var(--r-md);position:relative;overflow:hidden}
+.g1{background:linear-gradient(160deg,#17304A,#0E1C2E)} .g2{background:linear-gradient(160deg,#1D3B33,#10241F)}
+.g3{background:linear-gradient(160deg,#33261A,#221810)} .g4{background:linear-gradient(160deg,#2B2140,#1A1430)}
+.g5{background:linear-gradient(160deg,#3A2030,#241520)} .g6{background:linear-gradient(160deg,#243447,#152238)}
+.g7{background:linear-gradient(160deg,#3D3320,#262012)} .g8{background:linear-gradient(160deg,#20323E,#132028)}
+.ch{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:650;color:rgba(247,248,250,.55)}
+.lthumb .ch{font-size:34px}
+.typ{position:absolute;left:8px;bottom:8px;font-size:10.5px;color:var(--ink-3);background:rgba(13,16,21,.55);border-radius:4px;padding:1px 7px}
+.ct{font-size:13px;font-weight:500;margin-top:8px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ci{font-size:12px;color:var(--ink-3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{position:absolute;top:8px;font-size:10.5px;font-weight:600;color:#fff;padding:2px 8px;border-radius:4px;line-height:1.6}
+.b-r{right:8px;background:rgba(13,16,21,.72)} .b-l{left:8px;background:var(--brand)} .b-live{left:8px;background:var(--bad);display:flex;align-items:center;gap:5px}
+.b-live i{width:6px;height:6px;border-radius:50%;background:#fff}
+.prog{position:absolute;left:0;right:0;bottom:0;height:2px;background:rgba(255,255,255,.22)}
+.prog i{display:block;height:100%;background:var(--brand-hi)}
+/* 悬停态：升层级 + 播放入口 + 快捷集数（规范 6.1 桌面交互态） */
+.pcard.hov .thumb{box-shadow:0 2px 8px rgba(0,0,0,.08),0 8px 24px rgba(0,0,0,.35)}
+.pcard.hov .ovl{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,16,21,0) 30%,rgba(13,16,21,.86));display:flex;align-items:center;justify-content:center}
+.pcard.hov .pbtn{width:44px;height:44px;border-radius:50%;background:var(--brand);display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.pcard.hov .eps{position:absolute;left:8px;right:8px;bottom:10px;display:flex;gap:6px}
+.pcard.hov .eps span{flex:1;text-align:center;font-size:11px;padding:3px 0;border-radius:4px;background:rgba(247,248,250,.14);color:var(--ink)}
+.pcard.hov .eps span.cur{background:var(--brand)}
+/* Hero */
+.hero{display:flex;gap:24px;border-radius:var(--r-lg);overflow:hidden;background:linear-gradient(120deg,#15273E 0%,#1E1B33 55%,#241520 100%);height:360px;position:relative}
+.hero .art{width:560px;align-self:stretch;background:linear-gradient(200deg,rgba(75,140,203,.35),rgba(13,16,21,0) 60%)}
+.hero .in{align-self:center;padding:0 32px;max-width:640px}
+.hero .k{font-size:12px;letter-spacing:.14em;color:var(--brand-hi);font-weight:600}
+.hero h3{font-size:40px;line-height:1.2;font-weight:700;margin:8px 0 10px}
+.hero .meta{color:var(--ink-2);font-size:14px}
+.hero .desc{color:var(--ink-3);font-size:13px;margin:12px 0 18px;max-width:56ch}
+.hbtns{display:flex;gap:12px}
+.btn{height:40px;padding:0 20px;border-radius:var(--r-md);display:inline-flex;align-items:center;gap:8px;font-weight:500;font-size:14px}
+.btn.pri{background:var(--brand);color:#fff}
+.btn.pri.hov{background:var(--brand-hi)}
+.btn.sec{border:1px solid var(--line-strong);color:var(--ink-2);background:rgba(23,27,33,.5)}
+.dots{position:absolute;right:24px;bottom:18px;display:flex;gap:6px}
+.dots i{width:16px;height:4px;border-radius:2px;background:rgba(255,255,255,.28)}
+.dots i.on{background:var(--brand-hi)}
+.hero .pause-note{position:absolute;left:24px;bottom:18px;font-size:11.5px;color:var(--ink-4)}
+/* 通用小件 */
+.chip{height:32px;padding:0 14px;border-radius:18px;border:1px solid var(--line-strong);color:var(--ink-2);display:inline-flex;align-items:center;font-size:13px}
+.chip.on{background:var(--brand-soft);border-color:var(--brand-hi);color:var(--brand-hi);font-weight:500}
+.sel{height:32px;padding:0 12px;border-radius:var(--r-md);border:1px solid var(--line-strong);display:inline-flex;align-items:center;gap:8px;color:var(--ink-2);font-size:13px}
+.focus-ring{outline:2px solid var(--brand-hi);outline-offset:1px}
+/* 详情 */
+.detail{display:flex;gap:32px}
+.detail .artbg{position:absolute;inset:0 0 auto;height:300px;background:linear-gradient(180deg,rgba(36,42,54,.5),rgba(13,16,21,0)),linear-gradient(120deg,#15273E,#1E1B33)}
+.dl{width:40%}
+.dposter{width:280px;aspect-ratio:2/3;border-radius:var(--r-lg);position:relative;overflow:hidden}
+.dl h2{font-size:28px;font-weight:700;margin-top:16px}
+.score{display:inline-flex;align-items:center;gap:6px;color:#E8B33A;font-weight:600}
+.dmeta{color:var(--ink-2);font-size:13px;margin-top:6px}
+.playbtn{margin-top:18px;height:48px;padding:0 24px;background:var(--brand);color:#fff;border-radius:var(--r-md);display:inline-flex;align-items:center;gap:10px;font-size:16px;font-weight:600}
+.acts{display:flex;gap:8px;margin-top:14px}
+.act{height:36px;padding:0 14px;border-radius:var(--r-md);border:1px solid var(--line-strong);color:var(--ink-2);display:inline-flex;align-items:center;gap:8px;font-size:13px}
+.dr{flex:1;min-width:0}
+.epgrid{display:grid;grid-template-columns:repeat(12,1fr);gap:8px}
+.ep{height:36px;border:1px solid var(--line);border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-family:Consolas,monospace;font-size:13px;color:var(--ink-2);position:relative}
+.ep.done{color:var(--ink-4);border-style:dashed}
+.ep.done::after{content:"✓";position:absolute;top:-6px;right:-4px;font-size:11px;color:var(--ok);font-family:initial}
+.ep.cur{border:2px solid var(--brand-hi);color:var(--ink);background:var(--brand-soft);font-weight:600}
+.ep .pp{position:absolute;left:6px;right:6px;bottom:3px;height:2px;background:rgba(255,255,255,.2)}
+.ep .pp i{display:block;height:100%;background:var(--brand-hi)}
+.ep.new::before{content:"最新";position:absolute;top:-8px;right:-6px;font-size:10px;background:var(--brand);color:#fff;border-radius:4px;padding:1px 6px;font-family:initial}
+.blk{margin-top:26px}
+.blk h4{font-size:18px;font-weight:650;margin-bottom:12px}
+.blk p{color:var(--ink-2);font-size:14px;max-width:72ch}
+.fold{color:var(--brand-hi);font-size:13px;margin-top:6px}
+.crew{display:flex;gap:20px}
+.crew .p{text-align:center}
+.crew .av{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:rgba(247,248,250,.55);margin-bottom:6px}
+.crew .n{font-size:12px;color:var(--ink-2)}
+.crew .r{font-size:11px;color:var(--ink-4)}
+/* 播放器 */
+.player{aspect-ratio:16/9;border-radius:var(--r-lg);background:radial-gradient(120% 90% at 30% 20%,#26364A 0%,#141A24 55%,#0A0E14 100%);position:relative;overflow:hidden}
+.pl-top{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;gap:12px;padding:14px 20px;background:linear-gradient(180deg,rgba(6,8,11,.72),rgba(6,8,11,0));font-size:14px}
+.pl-top .t{font-weight:500}
+.pl-ctl{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,rgba(6,8,11,.85),rgba(6,8,11,0));padding:26px 20px 12px}
+.pbar{height:8px;background:rgba(255,255,255,.22);border-radius:4px;position:relative;margin-bottom:6px}
+.pbar i{position:absolute;left:0;top:0;bottom:0;width:64%;background:var(--brand-hi);border-radius:4px}
+.pbar b{position:absolute;left:8px;top:0;bottom:0;width:12%;background:rgba(255,255,255,.34);border-radius:4px}
+.pbar .knob{position:absolute;left:64%;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+.thumbs{position:absolute;left:24%;bottom:58px;width:192px;border-radius:var(--r-md);overflow:hidden;border:1px solid var(--line-strong);box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.thumbs .tt{aspect-ratio:16/9;background:radial-gradient(80% 80% at 40% 30%,#33465E,#10151D);display:flex;align-items:center;justify-content:center;color:var(--ink-4);font-size:12px}
+.thumbs .ts{background:rgba(6,8,11,.85);text-align:center;font-family:Consolas,monospace;font-size:12px;padding:3px}
+.tr{display:flex;align-items:center;gap:4px;color:var(--ink-2)}
+.tb{width:36px;height:36px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center}
+.tb.hov{background:var(--bg-hi);color:var(--ink)}
+.tb.on{color:var(--brand-hi)}
+.ptime{font-family:Consolas,monospace;font-size:13px;color:var(--ink-2);margin:0 10px}
+.ptime b{color:var(--ink);font-weight:600}
+.pl-r{margin-left:auto;display:flex}
+/* 清晰度菜单（顺序锁死） */
+.qmenu{position:absolute;right:96px;bottom:64px;width:160px;background:var(--bg-surface);border:1px solid var(--line-strong);border-radius:var(--r-lg);padding:6px;box-shadow:0 8px 32px rgba(0,0,0,.14)}
+.qmenu .qh{font-size:11.5px;color:var(--ink-4);padding:6px 10px 4px}
+.qmenu .qi{height:32px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;border-radius:var(--r-md);font-size:13px;color:var(--ink-2)}
+.qmenu .qi.on{color:var(--brand-hi);background:var(--brand-soft);font-weight:600}
+.qmenu .qi.hov{background:var(--bg-hi)}
+.kbdrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.kbdrow span{font-size:12px;color:var(--ink-3)}
+.kbdrow kbd{font-family:Consolas,monospace;font-size:11px;border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:4px;padding:1px 7px;color:var(--ink-2)}
+/* 我的 */
+.tabs{display:flex;gap:22px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.tab{padding:10px 2px;font-size:15px;color:var(--ink-3);font-weight:500}
+.tab.on{color:var(--ink);box-shadow:inset 0 -2px 0 var(--brand-hi)}
+.batchbar{height:40px;background:var(--brand-soft);border:1px solid rgba(75,140,203,.4);border-radius:var(--r-md);display:flex;align-items:center;gap:14px;padding:0 16px;font-size:13px;color:var(--ink-2);margin-bottom:14px}
+.batchbar b{color:var(--brand-hi)}
+.batchbar .ops{margin-left:auto;display:flex;gap:8px}
+.sel-ring{position:absolute;left:8px;top:8px;width:22px;height:22px;border-radius:50%;background:var(--brand);display:flex;align-items:center;justify-content:center;color:#fff}
+/* 源管理 表格 */
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th{text-align:left;font-size:12px;color:var(--ink-3);font-weight:600;padding:10px 12px;border-bottom:1px solid var(--line-strong);background:var(--bg-surface)}
+.tbl td{padding:11px 12px;border-bottom:1px solid var(--line)}
+.tbl tr.sel-row td{background:var(--brand-soft)}
+.tbl tr.hov-row td{background:var(--bg-surface)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:8px}
+.tagline{font-size:11.5px;color:var(--ink-4);border:1px solid var(--line);border-radius:4px;padding:1px 8px}
+.switch{width:36px;height:20px;border-radius:10px;background:var(--line-strong);position:relative}
+.switch i{position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:var(--ink-3)}
+.switch.on{background:var(--brand)}
+.switch.on i{left:auto;right:2px;background:#fff}
+.statusbar{height:28px;border-top:1px solid var(--line);background:var(--bg-surface);display:flex;align-items:center;gap:18px;padding:0 24px;font-size:12px;color:var(--ink-4)}
+/* 画板注释 */
+.ann{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--brand-hi);background:rgba(31,111,180,.12);border:1px solid rgba(75,140,203,.35);border-radius:4px;padding:2px 8px;margin-left:8px;vertical-align:2px}
+</style>
+</head>
+<body>
+<div class="board">
+  <svg width="0" height="0" style="position:absolute"><defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v9h-6v-6h-6v6H3z"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4.5 4.5"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-5 8-5s6.5 1 8 5"/></symbol>
+    <symbol id="i-cog" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 4 7 12l8 8"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20C5 15 3 11 5.5 8 7.5 5.7 11 6.3 12 8.6 13 6.3 16.5 5.7 18.5 8 21 11 19 15 12 20Z"/></symbol>
+    <symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4M4 19h16"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.2 10.8 7.6-3.6M8.2 13.2l7.6 3.6"/></symbol>
+    <symbol id="i-cast" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="1.5"/><path d="M9 21h6M12 17v4"/></symbol>
+    <symbol id="i-pip" viewBox="0 0 24 24"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><rect x="12" y="12" width="7" height="5.5" rx="1"/></symbol>
+    <symbol id="i-cc" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M10.5 10.2a2.6 2.6 0 1 0 0 3.6M17 10.2a2.6 2.6 0 1 0 0 3.6"/></symbol>
+    <symbol id="i-speed" viewBox="0 0 24 24"><path d="M5 16a8 8 0 1 1 14 0"/><path d="m12 12 3.5-3.5"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-vol" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6"/></symbol>
+    <symbol id="i-full" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+    <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="8" ry="2.7"/><path d="M4 5.5v13c0 1.5 3.6 2.7 8 2.7s8-1.2 8-2.7v-13M4 12c0 1.5 3.6 2.7 8 2.7s8-1.2 8-2.7"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.9-6.2"/><path d="M20 3.5V8h-4.5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5L19.5 7"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><path d="M5 12h.01M12 12h.01M19 12h.01" stroke-width="3"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  </defs></svg>
+
+  <header class="bhead">
+    <p class="eyebrow">StarScreen · Desktop Mockups</p>
+    <h1>星映 · Windows 桌面端设计稿（7 屏）</h1>
+    <p class="lede">依据《三端统一设计规范》v1.1 桌面端章节（3 视觉基础 / 4 组件 / 5.1 桌面适配 / 6 影音模式）。暗色主题为产品默认（媒体消费惯例），品牌色 #1F6FB4 与语义色严格沿用规范锁死值，全部间距/圆角/字号出自规范令牌。</p>
+    <div class="spec-strip">
+      <span>正文 <b>14px / 1.6</b></span><span>控件高 <b>32 / 36 / 40</b></span><span>左侧导航 <b>240px</b>·可折叠 64</span><span>顶栏 <b>56px</b></span><span>内容最大宽 <b>1440px</b></span><span>海报卡 <b>2:3 · 160×240</b></span><span>横版卡 <b>16:9 · 224×126</b></span><span>焦点环 <b>2px ≥3:1</b></span><span>最小点击区 <b>24×24</b></span>
+    </div>
+  </header>
+
+  <!-- ================= D1 首页 ================= -->
+  <div class="frame-label"><span class="no">D1</span><h2>首页</h2>
+    <div class="tags"><span>Hero 320–420px · 自动轮播≥5s · 悬停暂停</span><span>继续观看轨道置顶</span><span>卡片悬停=播放入口+快捷集数</span></div>
+  </div>
+  <div class="win">
+    <div class="topbar">
+      <div class="logo"><span class="mark">星</span>星映 <span class="tagline" style="margin-left:6px">桌面版</span></div>
+      <div class="qbox"><svg class="ic"><use href="#i-search"/></svg>搜索影片、剧集…<span class="kbd">Ctrl+F</span></div>
+      <div class="ticons">
+        <div class="ticon hov"><svg class="ic"><use href="#i-refresh"/></svg></div>
+        <div class="ticon focus"><svg class="ic"><use href="#i-cog"/></svg></div>
+        <div class="ticon"><svg class="ic"><use href="#i-user"/></svg></div>
+      </div>
+    </div>
+    <div class="body">
+      <nav class="nav">
+        <div class="nitem act"><svg class="ic"><use href="#i-home"/></svg>首页</div>
+        <div class="nitem"><svg class="ic"><use href="#i-grid"/></svg>分类</div>
+        <div class="nitem"><svg class="ic"><use href="#i-search"/></svg>搜索</div>
+        <div class="nitem"><svg class="ic"><use href="#i-cast"/></svg>直播</div>
+        <div class="nitem"><svg class="ic"><use href="#i-heart"/></svg>我的</div>
+        <div class="nitem"><svg class="ic"><use href="#i-db"/></svg>源管理</div>
+        <div class="grp">设置</div>
+        <div class="nitem"><svg class="ic"><use href="#i-cog"/></svg>设置</div>
+        <div class="add"><svg class="ic"><use href="#i-plus"/></svg>添加内容源</div>
+      </nav>
+      <main class="content">
+        <div class="hero">
+          <div class="art"></div>
+          <div class="in">
+            <div class="k">本周推荐 · 剧集</div>
+            <h3>长夜将尽</h3>
+            <div class="meta">2026 · 大陆 · 剧情 / 悬疑 · 全 24 集</div>
+            <p class="desc">一桩跨越二十年的旧案，两位刑警在漫长黑夜里彼此照亮。来自 3 个内容源的 4K 片源已就绪。</p>
+            <div class="hbtns">
+              <span class="btn pri"><svg class="ic"><use href="#i-play"/></svg>立即播放</span>
+              <span class="btn sec"><svg class="ic"><use href="#i-heart"/></svg>收藏</span>
+            </div>
+          </div>
+          <div class="dots"><i class="on"></i><i></i><i></i></div>
+          <div class="pause-note">自动轮播 · 8s · 鼠标悬停暂停</div>
+        </div>
+        <div class="rail-h"><h4>继续观看</h4><span class="more">查看全部 ›</span><span class="ann">看完≥90% 自动移出</span></div>
+        <div class="rail">
+          <div class="pcard"><div class="lthumb g1"><span class="ch">长</span><div class="prog"><i style="width:42%"></i></div></div><div class="ct">长夜将尽</div><div class="ci">第 3 集 · 剩余 42 分钟</div></div>
+          <div class="pcard"><div class="lthumb g4"><span class="ch">山</span><div class="prog"><i style="width:68%"></i></div></div><div class="ct">山那边的夏天</div><div class="ci">第 8 集 · 剩余 15 分钟</div></div>
+          <div class="pcard"><div class="lthumb g3"><span class="ch">星</span><div class="prog"><i style="width:12%"></i></div></div><div class="ct">星海拾光</div><div class="ci">电影 · 剩余 96 分钟</div></div>
+          <div class="pcard"><div class="lthumb g2"><span class="ch">雾</span><div class="prog"><i style="width:85%"></i></div></div><div class="ct">雾中来客</div><div class="ci">第 2 集 · 剩余 8 分钟</div></div>
+          <div class="pcard"><div class="lthumb g6"><span class="ch">灯</span><div class="prog"><i style="width:55%"></i></div></div><div class="ct">灯塔旅馆</div><div class="ci">第 1 集 · 剩余 33 分钟</div></div>
+        </div>
+        <div class="rail-h"><h4>热播剧集</h4><span class="more">更多 ›</span></div>
+        <div class="rail">
+          <div class="pcard hov"><div class="thumb g5"><span class="ch">夜</span><span class="badge b-r">更新至 12 集</span><div class="ovl"><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div class="eps"><span>01</span><span class="cur">02</span><span>03</span></div></div></div><div class="ct">夜航西行的候鸟</div><div class="ci">2026 · 大陆 · 剧情</div></div>
+          <div class="pcard"><div class="thumb g1"><span class="ch">潮</span><span class="badge b-r">蓝光</span></div><div class="ct">潮汐图书馆</div><div class="ci">2025 · 大陆 · 奇幻</div></div>
+          <div class="pcard"><div class="thumb g2"><span class="ch">麦</span></div><div class="ct">麦田里的钟表匠</div><div class="ci">2026 · 大陆 · 悬疑</div></div>
+          <div class="pcard"><div class="thumb g7"><span class="ch">风</span><span class="badge b-r">全 12 集</span></div><div class="ct">风起电台街</div><div class="ci">2025 · 大陆 · 都市</div></div>
+          <div class="pcard"><div class="thumb g4"><span class="ch">城</span></div><div class="ct">城南旧事新编</div><div class="ci">2024 · 大陆 · 家庭</div></div>
+          <div class="pcard"><div class="thumb g6"><span class="ch">雪</span><span class="badge b-r">更新至 06 集</span></div><div class="ct">雪线之上的信</div><div class="ci">2026 · 大陆 · 冒险</div></div>
+        </div>
+      </main>
+    </div>
+    <div class="statusbar"><span>已接入 3 个内容源 · 全部正常</span><span>本机模式 · 数据不出设备</span></div>
+  </div>
+  <p class="note">海报使用「缺失图兜底」样式演示（品牌色系底 + 标题首字 + 类型标签，规范 6.9）。继续观看卡片副信息锁死为「第 N 集 · 剩余 M 分钟」并叠加进度条（桌面 2px）。悬停卡片：提升层级 + 显示播放入口与快捷集数。</p>
+
+  <!-- ================= D2 分类 ================= -->
+  <div class="frame-label"><span class="no">D2</span><h2>分类浏览</h2>
+    <div class="tags"><span>筛选条=类型/地区/年份/排序</span><span>筛选状态可记忆</span><span>网格密度 6–8/行</span></div>
+  </div>
+  <div class="win">
+    <div class="topbar">
+      <div class="logo"><span class="mark">星</span>星映</div>
+      <div class="qbox"><svg class="ic"><use href="#i-search"/></svg>搜索影片、剧集…<span class="kbd">Ctrl+F</span></div>
+    </div>
+    <div class="body">
+      <nav class="nav">
+        <div class="nitem"><svg class="ic"><use href="#i-home"/></svg>首页</div>
+        <div class="nitem act"><svg class="ic"><use href="#i-grid"/></svg>分类</div>
+        <div class="nitem"><svg class="ic"><use href="#i-search"/></svg>搜索</div>
+        <div class="nitem"><svg class="ic"><use href="#i-cast"/></svg>直播</div>
+        <div class="nitem"><svg class="ic"><use href="#i-heart"/></svg>我的</div>
+        <div class="nitem"><svg class="ic"><use href="#i-db"/></svg>源管理</div>
+      </nav>
+      <main class="content">
+        <div class="pgh"><h3>剧集</h3><span class="sub">来自 3 个内容源 · 共 12,480 部</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+          <span class="chip on">全部类型</span><span class="chip">剧情</span><span class="chip">科幻</span><span class="chip">悬疑</span><span class="chip">喜剧</span><span class="chip">动画</span><span class="chip">纪录片</span>
+          <span style="width:16px"></span>
+          <span class="sel">地区：全部 <svg class="ic" style="width:14px;height:14px"><use href="#i-chev"/></svg></span>
+          <span class="sel focus-ring">年份：2026 <svg class="ic" style="width:14px;height:14px"><use href="#i-chev"/></svg></span>
+          <span class="sel">排序：最近更新 <svg class="ic" style="width:14px;height:14px"><use href="#i-chev"/></svg></span>
+        </div>
+        <div class="grid">
+          <div class="pcard"><div class="thumb g5"><span class="ch">夜</span><span class="badge b-r">更新至 12 集</span></div><div class="ct">夜航西行的候鸟</div><div class="ci">2026 · 大陆 · 剧情</div></div>
+          <div class="pcard"><div class="thumb g1"><span class="ch">潮</span><span class="badge b-r">蓝光</span></div><div class="ct">潮汐图书馆</div><div class="ci">2025 · 大陆 · 奇幻</div></div>
+          <div class="pcard"><div class="thumb g2"><span class="ch">麦</span></div><div class="ct">麦田里的钟表匠</div><div class="ci">2026 · 大陆 · 悬疑</div></div>
+          <div class="pcard"><div class="thumb g7"><span class="ch">风</span><span class="badge b-r">全 12 集</span></div><div class="ct">风起电台街</div><div class="ci">2025 · 大陆 · 都市</div></div>
+          <div class="pcard"><div class="thumb g4"><span class="ch">城</span></div><div class="ct">城南旧事新编</div><div class="ci">2024 · 大陆 · 家庭</div></div>
+          <div class="pcard"><div class="thumb g6"><span class="ch">雪</span></div><div class="ct">雪线之上的信</div><div class="ci">2026 · 大陆 · 冒险</div></div>
+          <div class="pcard"><div class="thumb g3"><span class="ch">星</span></div><div class="ct">星海拾光</div><div class="ci">2026 · 大陆 · 科幻</div></div>
+          <div class="pcard"><div class="thumb g8"><span class="ch">雾</span><span class="badge b-r">更新至 02 集</span></div><div class="ct">雾中来客</div><div class="ci">2026 · 大陆 · 悬疑</div></div>
+          <div class="pcard"><div class="thumb g2"><span class="ch">竹</span></div><div class="ct">竹林旧事</div><div class="ci">2023 · 大陆 · 剧情</div></div>
+          <div class="pcard"><div class="thumb g4"><span class="ch">河</span></div><div class="ct">河的第三条岸</div><div class="ci">2025 · 大陆 · 文艺</div></div>
+          <div class="pcard"><div class="thumb g1"><span class="ch">灯</span><span class="badge b-r">全 08 集</span></div><div class="ct">灯塔旅馆</div><div class="ci">2026 · 大陆 · 悬疑</div></div>
+          <div class="pcard"><div class="thumb g6"><span class="ch">茶</span></div><div class="ct">茶馆十二年</div><div class="ci">2024 · 大陆 · 年代</div></div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <p class="note">筛选条件由源声明（对应源引擎的 caps 声明）；筛选与滚动位置跨页面记忆（桌面键盘用户 ←→ 可在网格内移动，Tab 顺序=视觉顺序）。</p>
+
+  <!-- ================= D3 聚合搜索 ================= -->
+  <div class="frame-label"><span class="no">D3</span><h2>聚合搜索</h2>
+    <div class="tags"><span>并发搜多源 · 渐进加载</span><span>同片归并为「多源卡」</span><span>失败源跳过不阻塞</span><span>空态给替代推荐</span></div>
+  </div>
+  <div class="win">
+    <div class="topbar">
+      <div class="logo"><span class="mark">星</span>星映</div>
+      <div class="qbox focus-ring" style="border-color:var(--brand-hi);color:var(--ink)"><svg class="ic" style="color:var(--brand-hi)"><use href="#i-search"/></svg>长夜<b style="color:var(--brand-hi);font-weight:600">将</b>尽<span style="width:1px;height:16px;background:var(--brand-hi)"></span><span class="kbd">Enter 搜索</span></div>
+    </div>
+    <div class="body">
+      <nav class="nav">
+        <div class="nitem"><svg class="ic"><use href="#i-home"/></svg>首页</div>
+        <div class="nitem"><svg class="ic"><use href="#i-grid"/></svg>分类</div>
+        <div class="nitem act"><svg class="ic"><use href="#i-search"/></svg>搜索</div>
+        <div class="nitem"><svg class="ic"><use href="#i-cast"/></svg>直播</div>
+        <div class="nitem"><svg class="ic"><use href="#i-heart"/></svg>我的</div>
+        <div class="nitem"><svg class="ic"><use href="#i-db"/></svg>源管理</div>
+      </nav>
+      <main class="content">
+        <div class="pgh"><h3>搜索结果</h3><span class="sub">“长夜将尽” · 已搜索 3 个内容源 · 2.8s · 1 个源超时已跳过</span><span class="ann">失败源可单独重试</span></div>
+        <div class="rail-h"><h4>完全匹配 <span style="font-size:12px;color:var(--ink-4);font-weight:400">· 在 3 个源中找到</span></h4></div>
+        <div style="display:flex;gap:16px">
+          <div class="pcard hov" style="width:224px"><div class="lthumb g1"><span class="ch">长</span><span class="badge b-l">多源 3</span><div class="ovl"><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span></div></div><div class="ct">长夜将尽</div><div class="ci">2026 · 大陆 · 剧情 · 全 24 集 · ★7.8</div></div>
+          <div style="flex:1">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+              <span class="chip on"><svg class="ic" style="width:14px;height:14px"><use href="#i-db"/></svg>自建 NAS 媒体库 · 4K</span>
+              <span class="chip on">公开演示源 A · 蓝光</span>
+              <span class="chip on">演示源 B · 1080P</span>
+              <span class="chip" style="border-style:dashed;color:var(--ink-4)">超时源 · 重试</span>
+            </div>
+            <p style="color:var(--ink-2);font-size:14px;max-width:70ch">一桩跨越二十年的旧案，两位刑警在漫长黑夜里彼此照亮。点开影片后可随时<b style="color:var(--ink)">换源</b>：任一线路失效，一键切换到其他源，进度不丢失。</p>
+            <div class="kbdrow" style="margin-top:12px"><kbd>Enter</kbd><span>打开影片</span><kbd>↑ ↓</kbd><span>切换候选</span><kbd>Esc</kbd><span>返回</span></div>
+          </div>
+        </div>
+        <div class="rail-h"><h4>相关结果</h4></div>
+        <div class="grid">
+          <div class="pcard"><div class="thumb g4"><span class="ch">灯</span></div><div class="ct">长夜的灯</div><div class="ci">2024 · 大陆 · 剧情</div></div>
+          <div class="pcard"><div class="thumb g6"><span class="ch">夜</span><span class="badge b-r">全 06 集</span></div><div class="ct">夜将尽时</div><div class="ci">2025 · 大陆 · 悬疑</div></div>
+          <div class="pcard"><div class="thumb g2"><span class="ch">长</span></div><div class="ct">长街灯火</div><div class="ci">2023 · 大陆 · 都市</div></div>
+          <div class="pcard"><div class="thumb g3"><span class="ch">将</span></div><div class="ct">将军的黄昏</div><div class="ci">2022 · 大陆 · 历史</div></div>
+          <div class="pcard"><div class="thumb g8"><span class="ch">尽</span></div><div class="ct">尽头是海</div><div class="ci">2025 · 大陆 · 文艺</div></div>
+          <div class="pcard"><div class="thumb g5"><span class="ch">长</span><span class="badge b-r">更新至 18 集</span></div><div class="ct">长歌未央</div><div class="ci">2026 · 大陆 · 古装</div></div>
+        </div>
+        <div class="blk" style="margin-top:22px;background:var(--bg-surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px 20px;display:flex;gap:12px;align-items:center">
+          <svg class="ic" style="color:var(--ink-3)"><use href="#i-search"/></svg>
+          <p style="color:var(--ink-3);font-size:13px">没有找到想要的？试试其他关键词，或到 <b style="color:var(--ink-2)">源管理</b> 检查内容源健康状态 —— 无结果的页面永远提供替代推荐，不做空白页。</p>
+        </div>
+      </main>
+    </div>
+  </div>
+  <p class="note">搜索词高亮与联想 ≤10 条、结果支持「只看有资源的」筛选；多源归并卡右上角标「多源 N」（星映自定义角标，遵循规范角标语言：左上、品牌色底白字）。</p>
+
+  <!-- ================= D4 详情 ================= -->
+  <div class="frame-label"><span class="no">D4</span><h2>详情页（与 TV / 手机端同构）</h2>
+    <div class="tags"><span>区块顺序锁死①主视觉→②标题→③主操作→④选集→⑤简介→⑥演职→⑦推荐</span><span>主按钮随播放状态变化</span><span>元数据 ≤2 行</span></div>
+  </div>
+  <div class="win" style="position:relative">
+    <div class="artbg"></div>
+    <div style="position:relative;display:flex;gap:32px;padding:32px 32px 28px">
+      <div class="dl" style="width:34%">
+        <div class="dposter g1"><span class="ch">长</span><span class="badge b-r">全 24 集</span></div>
+        <h2>长夜将尽</h2>
+        <div style="margin-top:8px"><span class="score">★ 7.8</span><span class="dmeta" style="margin-left:10px">2026 · 大陆 · 剧情 / 悬疑</span></div>
+        <div class="dmeta">自建 NAS 媒体库 · 4K · 已就绪 3 条线路</div>
+        <span class="playbtn"><svg class="ic"><use href="#i-play"/></svg>继续观看 · 第 3 集 12:35</span>
+        <div class="acts">
+          <span class="act"><svg class="ic"><use href="#i-heart"/></svg>已收藏</span>
+          <span class="act"><svg class="ic"><use href="#i-dl"/></svg>下载</span>
+          <span class="act"><svg class="ic"><use href="#i-share"/></svg>分享</span>
+          <span class="act"><svg class="ic"><use href="#i-db"/></svg>换源 (3)</span>
+        </div>
+      </div>
+      <div class="dr">
+        <div class="blk" style="margin-top:0">
+          <div style="display:flex;align-items:baseline;gap:12px"><h4>选集</h4><span style="font-size:12px;color:var(--ink-4)">序号三端统一前导零</span></div>
+          <div class="epgrid">
+            <span class="ep done">01</span><span class="ep done">02</span><span class="ep cur">03<div class="pp"><i style="width:42%"></i></div></span><span class="ep">04</span><span class="ep">05</span><span class="ep">06</span><span class="ep">07</span><span class="ep">08</span><span class="ep">09</span><span class="ep">10</span><span class="ep">11</span><span class="ep new">12</span>
+            <span class="ep">13</span><span class="ep">14</span><span class="ep">15</span><span class="ep">16</span><span class="ep">17</span><span class="ep">18</span><span class="ep">19</span><span class="ep">20</span><span class="ep">21</span><span class="ep">22</span><span class="ep">23</span><span class="ep">24</span>
+          </div>
+        </div>
+        <div class="blk"><h4>简介</h4><p>一桩跨越二十年的旧案，两位刑警在漫长黑夜里彼此照亮。当所有证据指向同一扇门，他们才发现真正的答案藏在各自心里……</p><div class="fold">展开全部 ▾</div></div>
+        <div class="blk"><h4>演职人员</h4><div class="crew">
+          <div class="p"><div class="av g1">沈</div><div class="n">沈之南</div><div class="r">导演</div></div>
+          <div class="p"><div class="av g4">林</div><div class="n">林晚</div><div class="r">饰 程澈</div></div>
+          <div class="p"><div class="av g3">陆</div><div class="n">陆则明</div><div class="r">饰 老曹</div></div>
+          <div class="p"><div class="av g2">苏</div><div class="n">苏禾</div><div class="r">饰 小满</div></div>
+        </div></div>
+        <div class="blk"><h4>相关推荐</h4><div class="rail">
+          <div class="pcard"><div class="lthumb g5" style="width:224px"><span class="ch">雾</span></div><div class="ct">雾中来客</div></div>
+          <div class="pcard"><div class="lthumb g2" style="width:224px"><span class="ch">麦</span></div><div class="ct">麦田里的钟表匠</div></div>
+          <div class="pcard"><div class="lthumb g6" style="width:224px"><span class="ch">灯</span></div><div class="ct">灯塔旅馆</div></div>
+          <div class="pcard"><div class="lthumb g7" style="width:224px"><span class="ch">风</span></div><div class="ct">风起电台街</div></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+  <p class="note">主按钮文案 = 「继续观看 · 第 3 集 12:35」（状态机：未播=立即播放 / 看过=继续观看 · 第 N 集 时间点 / 看完=重新播放）。星映无会员体系，规范 6.8 付费规则不适用；「换源」为星映特有次级操作（跨源切换），与「下载 / 分享」同排。</p>
+
+  <!-- ================= D5 播放器 ================= -->
+  <div class="frame-label"><span class="no">D5</span><h2>播放器 · 控制层</h2>
+    <div class="tags"><span>鼠标静止 3s 控制栏淡出</span><span>进度条 4px→悬停 8px + 关键帧预览</span><span>键盘基线表全部实现</span><span>清晰度顺序锁死</span></div>
+  </div>
+  <div class="win">
+    <div class="player">
+      <div class="pl-top">
+        <span class="tb"><svg class="ic"><use href="#i-back"/></svg></span>
+        <span class="t">长夜将尽 · 第 3 集</span>
+        <span class="chip" style="height:28px;margin-left:8px">自建 NAS 媒体库 · 4K</span>
+        <span style="margin-left:auto"></span>
+        <span class="tb"><svg class="ic"><use href="#i-db"/></svg></span>
+        <span class="tb hov"><svg class="ic"><use href="#i-more"/></svg></span>
+      </div>
+      <div class="thumbs"><div class="tt">关键帧预览</div><div class="ts">01:12:35</div></div>
+      <div class="qmenu">
+        <div class="qh">清晰度</div>
+        <div class="qi">自动</div><div class="qi">流畅</div><div class="qi">标清</div><div class="qi">高清</div><div class="qi hov">超清</div><div class="qi on">蓝光 <svg class="ic" style="width:14px;height:14px"><use href="#i-check"/></svg></div>
+      </div>
+      <div class="pl-ctl">
+        <div class="pbar"><i></i><b></b><span class="knob"></span></div>
+        <div class="tr">
+          <span class="tb"><svg class="ic"><use href="#i-play"/></svg></span>
+          <span class="tb"><svg class="ic" style="transform:rotate(180deg)"><use href="#i-chev"/></svg></span>
+          <span class="tb"><svg class="ic"><use href="#i-chev"/></svg></span>
+          <span class="tb"><svg class="ic"><use href="#i-vol"/></svg></span>
+          <span class="ptime"><b>01:12:35</b> / 01:58:00</span>
+          <span style="flex:1"></span>
+          <span class="tb on"><svg class="ic"><use href="#i-speed"/></svg>1.0×</span>
+          <span class="tb on"><svg class="ic"><use href="#i-cc"/></svg>中英</span>
+          <span class="tb hov"><svg class="ic"><use href="#i-db"/></svg>蓝光</span>
+          <span class="tb"><svg class="ic"><use href="#i-pip"/></svg></span>
+          <span class="tb"><svg class="ic"><use href="#i-full"/></svg></span>
+        </div>
+      </div>
+    </div>
+    <div class="kbdrow" style="padding:14px 20px">
+      <kbd>Space</kbd><span>播放/暂停</span><kbd>← →</kbd><span>±10s</span><kbd>↑ ↓</kbd><span>音量±5%</span><kbd>Shift+←→</kbd><span>上/下一集</span><kbd>F</kbd><span>全屏</span><kbd>M</kbd><span>静音</span><kbd>?</kbd><span>快捷键面板</span>
+    </div>
+  </div>
+  <p class="note">清晰度菜单顺序锁死：自动 / 流畅 / 标清 / 高清 / 超清 / 蓝光（三端逐字一致）；进度条悬停显示关键帧缩略图 + 时间戳（桌面独有能力，必须做）；右键菜单中每一项在控制栏同样可达。</p>
+
+  <!-- ================= D6 我的 ================= -->
+  <div class="frame-label"><span class="no">D6</span><h2>我的 · 收藏与历史</h2>
+    <div class="tags"><span>批量选择 Ctrl/Shift/Ctrl+A</span><span>删除可撤销</span><span>数据全本机</span></div>
+  </div>
+  <div class="win">
+    <div class="topbar">
+      <div class="logo"><span class="mark">星</span>星映</div>
+      <div class="qbox"><svg class="ic"><use href="#i-search"/></svg>在收藏与历史中查找…</div>
+    </div>
+    <div class="body">
+      <nav class="nav">
+        <div class="nitem"><svg class="ic"><use href="#i-home"/></svg>首页</div>
+        <div class="nitem"><svg class="ic"><use href="#i-grid"/></svg>分类</div>
+        <div class="nitem"><svg class="ic"><use href="#i-search"/></svg>搜索</div>
+        <div class="nitem"><svg class="ic"><use href="#i-cast"/></svg>直播</div>
+        <div class="nitem act"><svg class="ic"><use href="#i-heart"/></svg>我的</div>
+        <div class="nitem"><svg class="ic"><use href="#i-db"/></svg>源管理</div>
+      </nav>
+      <main class="content">
+        <div class="tabs"><span class="tab on">收藏 24</span><span class="tab">观看历史 156</span><span class="tab">下载 3</span></div>
+        <div class="batchbar"><b>已选 2 项</b><span>Ctrl+点击加选 · Shift+点击范围 · Ctrl+A 全选</span>
+          <span class="ops"><span class="chip" style="height:30px">移动到收藏夹</span><span class="chip" style="height:30px;border-color:rgba(192,50,43,.5);color:#E08884">删除</span></span>
+        </div>
+        <div class="grid">
+          <div class="pcard"><div class="thumb g1"><span class="sel-ring"><svg class="ic" style="width:14px;height:14px"><use href="#i-check"/></svg></span><span class="ch">长</span></div><div class="ct">长夜将尽</div><div class="ci">追剧夹 · 更新至 12 集</div></div>
+          <div class="pcard"><div class="thumb g4"><span class="sel-ring"><svg class="ic" style="width:14px;height:14px"><use href="#i-check"/></svg></span><span class="ch">山</span></div><div class="ct">山那边的夏天</div><div class="ci">追剧夹 · 更新至 08 集</div></div>
+          <div class="pcard"><div class="thumb g3"><span class="ch">星</span></div><div class="ct">星海拾光</div><div class="ci">电影</div></div>
+          <div class="pcard"><div class="thumb g2"><span class="ch">雾</span><span class="badge b-r">更新至 02 集</span></div><div class="ct">雾中来客</div><div class="ci">追剧夹</div></div>
+          <div class="pcard"><div class="thumb g6"><span class="ch">灯</span></div><div class="ct">灯塔旅馆</div><div class="ci">电影</div></div>
+          <div class="pcard"><div class="thumb g7"><span class="ch">风</span></div><div class="ct">风起电台街</div><div class="ci">追剧夹</div></div>
+        </div>
+        <div class="blk" style="margin-top:22px"><h4>收藏夹</h4>
+          <div style="display:flex;gap:10px">
+            <span class="chip on">全部 24</span><span class="chip">追剧夹 14</span><span class="chip">周末电影 7</span><span class="chip">纪录片 3</span><span class="chip" style="border-style:dashed">+ 新建收藏夹</span>
+          </div>
+        </div>
+      </main>
+    </div>
+    <div class="statusbar"><span>历史按最后播放时间倒序 · 已看完自动移出「继续观看」</span><span>删除操作 5 秒内可撤销</span></div>
+  </div>
+  <p class="note">星映无账号体系（合规基线）：个人数据全部本机 SQLite，跨端经局域网同步（v0.9），不做云端登录，规范中「登录/会员」条款标记不适用。</p>
+
+  <!-- ================= D7 源管理 ================= -->
+  <div class="frame-label"><span class="no">D7</span><h2>源管理（桌面端效率场景）</h2>
+    <div class="tags"><span>数据表格：排序/列宽/行悬停</span><span>右键菜单=加速入口</span><span>健康度探活自动轮转</span></div>
+  </div>
+  <div class="win">
+    <div class="topbar">
+      <div class="logo"><span class="mark">星</span>星映</div>
+      <span style="margin-left:auto"></span>
+      <span class="btn sec" style="height:36px"><svg class="ic" style="width:16px;height:16px"><use href="#i-dl"/></svg>导入 TVBox 配置</span>
+      <span class="btn pri" style="height:36px"><svg class="ic" style="width:16px;height:16px"><use href="#i-plus"/></svg>添加内容源</span>
+    </div>
+    <div class="body">
+      <nav class="nav">
+        <div class="nitem"><svg class="ic"><use href="#i-home"/></svg>首页</div>
+        <div class="nitem"><svg class="ic"><use href="#i-grid"/></svg>分类</div>
+        <div class="nitem"><svg class="ic"><use href="#i-search"/></svg>搜索</div>
+        <div class="nitem"><svg class="ic"><use href="#i-cast"/></svg>直播</div>
+        <div class="nitem"><svg class="ic"><use href="#i-heart"/></svg>我的</div>
+        <div class="nitem act"><svg class="ic"><use href="#i-db"/></svg>源管理</div>
+      </nav>
+      <main class="content">
+        <div class="pgh"><h3>源管理</h3><span class="sub">12 个源 · 9 个正常 · 1 个降级 · 2 个已禁用</span>
+          <span style="margin-left:auto"></span>
+          <span class="chip"><svg class="ic" style="width:14px;height:14px"><use href="#i-refresh"/></svg>全部测活</span>
+        </div>
+        <div class="batchbar"><b>已选 1 行</b><span>Ctrl+点击加选 · 右键打开操作菜单</span>
+          <span class="ops"><span class="chip" style="height:30px">启用</span><span class="chip" style="height:30px">禁用</span><span class="chip" style="height:30px;border-color:rgba(192,50,43,.5);color:#E08884">删除</span></span>
+        </div>
+        <table class="tbl">
+          <thead><tr><th style="width:36px"></th><th>源名称</th><th>类型</th><th>健康度</th><th>延迟</th><th>站点数</th><th>最近检测</th><th style="width:130px">启用</th></tr></thead>
+          <tbody>
+            <tr class="sel-row"><td><span class="sel-ring" style="width:18px;height:18px"><svg class="ic" style="width:12px;height:12px"><use href="#i-check"/></svg></span></td><td><b>自建 NAS 媒体库</b></td><td><span class="tagline">苹果CMS JSON</span></td><td><span class="dot" style="background:var(--ok)"></span>优良 98</td><td>86ms</td><td>1,204</td><td>2 分钟前</td><td><span class="switch on"><i></i></span></td></tr>
+            <tr class="hov-row"><td></td><td>公开演示源 A</td><td><span class="tagline">苹果CMS JSON</span></td><td><span class="dot" style="background:var(--ok)"></span>良好 91</td><td>210ms</td><td>8,742</td><td>8 分钟前</td><td><span class="switch on"><i></i></span></td></tr>
+            <tr><td></td><td>演示源 B</td><td><span class="tagline">苹果CMS XML</span></td><td><span class="dot" style="background:var(--warn)"></span>降级 64</td><td>1.2s</td><td>3,518</td><td>12 分钟前</td><td><span class="switch on"><i></i></span></td></tr>
+            <tr><td></td><td>聚合订阅 · 演示 JS 源</td><td><span class="tagline">JS 源（沙箱）</span></td><td><span class="dot" style="background:var(--ok)"></span>良好 88</td><td>430ms</td><td>36</td><td>15 分钟前</td><td><span class="switch on"><i></i></span></td></tr>
+            <tr><td></td><td>旧书签源（失效）</td><td><span class="tagline">需原生蜘蛛</span></td><td><span class="dot" style="background:var(--bad)"></span>不可用</td><td>—</td><td>—</td><td>昨天</td><td><span class="switch"><i></i></span></td></tr>
+          </tbody>
+        </table>
+        <p class="note" style="margin-top:12px">「需原生蜘蛛」= 该源依赖安卓 jar 爬虫，星映按兼容矩阵明确标记不可用原因（见 05 开发报告），而不是静默失败。</p>
+      </main>
+    </div>
+    <div class="statusbar"><span>自动测活：每 2 小时轮转抽样 · 失败连续 5 次熔断</span><span>聚合搜索将按健康度排序并发</span></div>
+  </div>
+  <p class="note">桌面端效率能力的落点：数据表格（点击表头排序、拖拽列宽、行悬停高亮）、批量选择 + 批量操作栏、右键菜单（启用/禁用/复制地址/测活）。每屏主按钮仅 1 个（添加内容源）。</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tv generator-info-name="demo-epg">
+  <channel id="CCTV-1">
+    <display-name lang="zh">CCTV-1综合</display-name>
+  </channel>
+  <channel id="HNWS">
+    <display-name lang="zh">湖南卫视</display-name>
+  </channel>
+  <programme start="20260926120000 +0800" stop="20260926130000 +0800" channel="CCTV-1">
+    <title lang="zh">新闻30分</title>
+  </programme>
+  <programme start="20260926130000 +0800" stop="20260926140000 +0800" channel="CCTV-1">
+    <title lang="zh">电视剧：长夜将尽</title>
+  </programme>
+  <programme start="20260926200000 +0800" stop="20260926220000 +0800" channel="HNWS">
+    <title lang="zh">黄金剧场</title>
+  </programme>
+</tv>

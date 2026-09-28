@@ -1,0 +1,6 @@
+{
+  "storeHouse": [
+    { "sourceName": "仓库一", "sourceUrl": "https://cdn.example.com/tv/wh1.json" },
+    { "sourceName": "仓库二", "sourceUrl": "./wh2.json" }
+  ]
+}

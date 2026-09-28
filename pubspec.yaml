@@ -1,0 +1,18 @@
+name: star_screen
+publish_to: none
+description: >-
+  星映 StarScreen —— 开源、内容中立的多源影视聚合播放框架。
+  本文件是 pub workspace 根：一次 `flutter pub get` 解析全部包。
+  架构与模块划分见 docs/03-整体设计方案.md；源引擎见 docs/05-源管理引擎开发报告.md。
+environment:
+  sdk: ^3.13.0
+workspace:
+  - apps/desktop
+  - apps/mobile
+  - apps/tv
+  - packages/domain
+  - packages/lan
+  - packages/player
+  - packages/plugins
+  - packages/storage
+  - packages/ui_kit

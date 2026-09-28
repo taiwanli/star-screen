@@ -1,0 +1,39 @@
+/* 星映 · tokens.tv.css —— TV 端尺寸覆盖（规范 §5.3，1080p 基准）
+ * 原则：所有视觉属性等比放大（字号 1.7×、控件 2.4×、间距 2.0×、圆角 1.5×、描边 3.0×）。
+ */
+:root {
+  --sys-font-size-body: 24px;       /* ≥20px 底线 */
+  --sys-font-size-title-1: 48px;
+  --sys-font-size-title-2: 36px;
+  --sys-font-size-title-3: 28px;
+  --sys-font-size-caption: 18px;
+  --sys-font-weight-max: 500;       /* 禁用 700 */
+
+  --sys-size-control-height-sm: 72px;
+  --sys-size-control-height-md: 88px;
+  --sys-size-touch-target-min: 100px;   /* 推荐 160×160 */
+
+  --sys-space-page-margin: 48px;    /* 安全区 48px（5% overscan）之内再布局 */
+  --sys-tv-safe-area: 48px;         /* 焦点框必须完整落在安全区内 */
+  --sys-space-gap: 32px;
+
+  --sys-radius-sm: 8px;
+  --sys-radius-md: 12px;
+  --sys-radius-lg: 18px;
+  --sys-radius-xl: 24px;
+
+  --sys-border-width-base: 1px;
+  --sys-border-width-focus: 3px;    /* 焦点三重信号：缩放1.06 + 3px描边 + elevation-5 */
+  --sys-elevation-focus: 0 12px 40px rgba(0, 0, 0, 0.55);
+
+  --sys-size-card-landscape: 480px 270px;  /* TV 禁用 2:3 竖版海报 */
+  --sys-size-card-progress-height: 6px;
+  --sys-size-subtitle-min: 32px;   /* 字幕 ≥32px + 半透明背景板 */
+  --sys-size-icon: 32px;
+
+  --sys-duration-fast: 180ms;      /* 动效 ×1.5 */
+  --sys-duration-base: 300ms;
+  --sys-duration-slow: 480ms;
+  --sys-focus-response-max: 100ms; /* 焦点响应红线 */
+  --sys-osd-auto-hide: 5s;
+}

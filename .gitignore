@@ -1,0 +1,72 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+build/
+pubspec.lock
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# macOS / Windows
+.DS_Store
+Thumbs.db
+
+# 日志与临时
+*.log
+*.tmp
+out/
+
+# 工具探测产物（docs/13 A3）
+tools/probe_report.md
+tools/source_samples.json
+
+# Android
+apps/*/android/.gradle/
+apps/*/android/local.properties
+apps/*/android/key.properties
+apps/*/android/app/upload-keystore.jks
+**/android/app/.cxx/
+
+# Windows
+apps/*/windows/flutter/ephemeral/
+.cxx/
+
+# 密钥与本地配置（禁止入库）
+*.keystore
+*.jks
+secrets/
+.env
+
+# 构建产物 / 发行包（不入库）
+dist/
+*.zip
+*.apk
+*.ipa
+*.msi
+*.exe
+
+# 用户本地订阅源列表（合规：不随仓库分发第三方源）
+sources/
+*.star.json
+
+# 绑定 JRE / 编译后的 Java 桥 class
+tools/jre-min/
+tools/java-bridge/*.class
+# 源码入库，产物可本地编译
+# tools/java-bridge/*.jar 可选提交
+
+# Python
+__pycache__/
+*.pyc
+
+# ��������
+.playwright-cli/
+35
+*.bak
+

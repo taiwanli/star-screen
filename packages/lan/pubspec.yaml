@@ -1,0 +1,15 @@
+name: star_lan
+description: >-
+  星映局域网互联：UDP 发现 + HTTP 推送/备份同步（docs/02 §4.9，无云服务器）。
+version: 0.1.0-dev.1
+publish_to: none
+environment:
+  sdk: ^3.13.0
+resolution: workspace
+dependencies:
+  star_domain:
+    path: ../domain
+  star_storage:
+    path: ../storage
+dev_dependencies:
+  test: ^1.25.0
